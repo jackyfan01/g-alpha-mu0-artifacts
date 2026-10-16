@@ -21,7 +21,8 @@ python q2_lambda_null_model.py    # 显式零模型 + p 值 + 顺序统计量 + 
 python q3b_family_extension.py    # 家族稳健性（有理函数 / 混合基 / 半整数幂）
 python q3_arb_certified.py        # Arb 定向舍入认证区间（不相交 / Lambda != alpha^-1）
 python R4_interval_arithmetic.py  # mpmath 区间交叉核对
-python q5_correlated_and_spacing.py  # 完全相关口径的第二证书 + 间距感知解析精确 p
+python q5_correlated_and_spacing.py  # 完全相关口径的第二证书 + 同一零模型的解析精确 p
+python q5b_alpha_ball_nist_caliber.py # alpha 端球口径的三档压力测试
 
 # 3) Lean 4 验证（无需 mathlib）
 lean src/G_alpha_squared_mu_zero.lean    # 打印 6 项判定，全部 PASS
@@ -55,7 +56,7 @@ arXiv:2409.03787）：
 
 注意：2019 SI 之后 $\mu_0$、$\varepsilon_0$ **不再是精确值**，其不确定度由 $\alpha$ 传递，严格有 $u_r(\mu_0)=u_r(\varepsilon_0)=u_r(\alpha)$。
 
-**展示口径**：NIST 的 $u_r$ 栏用未舍入的 $u$ 计算后展示为 $1.6\times10^{-10}$；本文与仓库脚本一律使用**展示值末位括号**反除得到的 $u_r(\alpha)=1.51\times10^{-10}$（即 $u(\alpha)=1.1\times10^{-12}$）。论文表 1 注 a 登记了这一差异，并给出按 $1.6\times10^{-10}$ 重跑同一 Arb trace 的结果：$u_r(\alpha^2\mu_0)$ 由 $4.52\times10^{-10}$ 增为 $4.80\times10^{-10}$（区间宽 6.1%），不相交性与间距 $115.42\,u(G)$ **不变**。
+**展示口径（重要，且对本文不利的一面也在此登记）**：仓库脚本与论文一律取 CODATA **展示值的末位**（$u(\alpha)=1.1\times10^{-12}$、$u(\mu_0)=2.0\times10^{-16}$、$u(G)=1.5\times10^{-15}$），R4/mpmath 交叉核对已与 q3/q5 用同一组输入球。由 $(20)$ 与 $(11)$ 的两位展示舍入反推，公共未舍入 $u_r\in[1.552,\,1.576)\times10^{-10}$，即本文的 $u(\alpha)=1.1\times10^{-12}$ **比真值窄 2.9\%--4.5\%**（方向不保守）。$u_r(\mu_0)$、$u_r(\varepsilon_0)$ 按各自括号反除为 $1.6\times10^{-10}$，而解析传递值恒等于 $u_r(\alpha)=1.51\times10^{-10}$——这个矛盾只是展示舍入，论文表 1 注 a 有完整说明。压力测试见 `src/q5b_alpha_ball_nist_caliber.py`：$u(\alpha)=1.10/1.132/1.168\times10^{-12}$ 给 $u_r(\alpha^2\mu_0)=4.52/4.66/4.80\times10^{-10}$（宽度 $+0\%/+2.95\%/+6.15\%$），**三档全部判不相交**，间距均为 $1.7312553\times10^{-13}=115.42\,u(G)$。
 
 ## 目录结构
 
@@ -68,7 +69,8 @@ src/
   q2_lambda_null_model.py        零模型显著性检验（定理 4：事后选择偏差）
   q3b_family_extension.py        家族稳健性：有理函数 / 混合基 (pi,e) / 半整数幂
   q3_arb_certified.py            Arb 认证区间（§4.8 严格判定）
-  q5_correlated_and_spacing.py   完全相关口径的第二证书 + 间距感知解析精确 p
+  q5_correlated_and_spacing.py   完全相关口径的第二证书 + 解析精确 p（覆盖测度闭式）
+  q5b_alpha_ball_nist_caliber.py alpha 端球口径的三档压力测试
   R4_interval_arithmetic.py      mpmath 区间交叉核对
 results/
   lambda_enumeration.json        穷举结果：排名、次优、各阈值计数
@@ -76,6 +78,7 @@ results/
   q3b_family_extension_results.json  四个家族的稳健性比较
   q3_arb_results.json            Arb 区间、不相交判定、sigma 水平
   q5_correlated_and_spacing.json 两版证书（独立球 / 完全相关）+ 五个家族的 p_exact
+  q5b_alpha_ball_nist_caliber.json 三档 alpha 端球压力测试（4.52/4.66/4.80e-10，均不相交）
   mpi_crosscheck.json            mpmath 区间交叉核对结果
 ```
 
@@ -98,8 +101,8 @@ Lean 侧自检：`lean src/G_dimension_lattice.lean` 打印
   **统计不显著**。
 - 系数空间置换检验在此类"事后挑选"问题上**退化**：$P \approx 1-e^{-1}$ 只反映是否抽中 $\Lambda$。
 - $\Lambda \neq \alpha^{-1}$、$\alpha^2\Lambda^2 \neq 1$ 均为 Arb 认证判定（区间不含 0 / 不含 1）。
-- 完全相关口径的第二证书（$\mu_0$ 由 $\alpha$ 在同一 trace 内导出）给 $u_r(\alpha^2\mu_0)=4.52\times10^{-10}$，与独立球口径的 $4.61\times10^{-10}$ 仅宽窄 1.9%，两版结论一致（`q5_correlated_and_spacing.py`）。
-- 间距感知的**解析精确** $p$（Voronoi 胞宽加权 ⟺ 最近邻覆盖测度，无需 Monte Carlo）：五个家族口径给 0.0111 / 0.0198 / 0.0322 / 0.0698 / 0.1270，主口径与 MC 的 0.12708 在小数点后四位互为校验。
+- 完全相关口径的第二证书（$\mu_0$ 由 $\alpha$ 在同一 trace 内导出）给 $u_r(\alpha^2\mu_0)=4.52\times10^{-10}$；独立球口径为 $4.61\times10^{-10}$，宽 $1.86\%$。**这 1.86\% 不是独立性的代价**：把 $\mu_0$ 端球换成传递值 $1.894\times10^{-16}$ 后两口径只差 $10^{-5}$ 量级（工件 	exttt{independence\_vs\_display}），差额来自 CODATA 把 $u(\mu_0)$ 向上舍入展示成 $(20)$（`q5_correlated_and_spacing.py`）。
+- 同一零模型的**解析精确** $p$：均匀随机靶落进第 $i$ 个 Voronoi 胞的概率本就是 $w_i/R$，所以解析闭式 $\lvert\bigcup_i[V_i\pm d]\cap[V_{\min},V_{\max}]\rvert/R$ 与 Monte Carlo 估的是同一个量；五个家族给 0.0111 / 0.0198 / 0.0322 / 0.0698 / 0.1270，与 MC 的 0.12708 在**小数点后三位**一致（差 $9.2\times10^{-5}$，为主口径 MC 标准误 $5.3\times10^{-4}$ 的 $0.17$ 倍）。易错点：对称的 $\min(2d,w_i)/R$ 是错的（本家族有 $17.15\%$ 的相邻间距小于 $2d_{\mathrm{obs}}$，会给出 0.1310），正确式是 $\sum_i(\min(d,L_i)+\min(d,R_i))/R$。
 
 ## 许可与引用
 

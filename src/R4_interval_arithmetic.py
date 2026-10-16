@@ -15,11 +15,14 @@ from mpmath import mp, mpf, mpi, pi, fabs
 
 mp.dps = 50
 
-ALPHA, UA_R = mpf("7.2973525643e-3"), mpf("1.6e-10")   # 相对不确定度
-MU0, U_MU0 = mpf("1.25663706127e-6"), mpf("2.0e-16")    # 1.25663706127(20)e-6
-G, U_G = mpf("6.67430e-11"), mpf("1.5e-15")             # 6.67430(15)e-11
+# 输入球与 q3/q5 完全同口径：一律取 CODATA **展示值的末位**（u(alpha)=1.1e-12，
+# u(mu0)=2.0e-16，u(G)=1.5e-15），这样 R4 与 Arb 的差异只反映"传播包络 vs 定向舍入"
+# 这一算术形式区别，而不掺杂口径区别。
+ALPHA, U_ALPHA = mpf("7.2973525643e-3"), mpf("1.1e-12")     # 7.297 352 5643(11)e-3
+MU0, U_MU0 = mpf("1.25663706127e-6"), mpf("2.0e-16")        # 1.256 637 061 27(20)e-6
+G, U_G = mpf("6.67430e-11"), mpf("1.5e-15")                 # 6.674 30(15)e-11
 
-A = mpi(str(ALPHA - ALPHA * UA_R), str(ALPHA + ALPHA * UA_R))
+A = mpi(str(ALPHA - U_ALPHA), str(ALPHA + U_ALPHA))
 M = mpi(str(MU0 - U_MU0), str(MU0 + U_MU0))
 Gg = mpi(str(G - U_G), str(G + U_G))
 

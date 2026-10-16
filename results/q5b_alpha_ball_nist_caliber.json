@@ -1,0 +1,54 @@
+{
+ "note": "u(alpha) 三种取法下的完全相关证书；G 端球不变。",
+ "cases": {
+  "displayed_last_digit": {
+   "u_alpha": 1.1000000044137596e-12,
+   "u_r_alpha": 1.5073959970019308e-10,
+   "alpha2mu0_interval": [
+    6.691762553115539e-11,
+    6.691762559167851e-11
+   ],
+   "u_r": 4.52221105442076e-10,
+   "disjoint": true,
+   "gap": 1.7312553115160482e-13,
+   "gap_in_uG": 115.41702047635633,
+   "sigma": 116.41704065073135,
+   "width_vs_main": 0.0
+  },
+  "nist_relative": {
+   "u_alpha": 1.167600004786033e-12,
+   "u_r_alpha": 1.6000323329561307e-10,
+   "alpha2mu0_interval": [
+    6.691762552929568e-11,
+    6.691762559353822e-11
+   ],
+   "u_r": 4.800121215842358e-10,
+   "disjoint": true,
+   "gap": 1.73125529291896e-13,
+   "gap_in_uG": 115.41701923655046,
+   "sigma": 116.41704065073135,
+   "width_vs_main": 0.06145448721370972
+  },
+  "lower_bound_from_mu0_paren": {
+   "u_alpha": 1.132400003980719e-12,
+   "u_r_alpha": 1.5517956601420486e-10,
+   "alpha2mu0_interval": [
+    6.691762553026405e-11,
+    6.691762559256985e-11
+   ],
+   "u_r": 4.6554104621008937e-10,
+   "disjoint": true,
+   "gap": 1.7312553026026601e-13,
+   "gap_in_uG": 115.41701988213046,
+   "sigma": 116.41704065073135,
+   "width_vs_main": 0.029454487213709912
+  }
+ },
+ "independence_vs_display": {
+  "u_r_indep_with_propagated_radius": 4.5222121710051277e-10,
+  "u_r_correlated": 4.522257107047882e-10,
+  "relative_difference": -9.936640418914759e-06,
+  "u_r_indep_with_displayed_20": 4.6063414784115406e-10,
+  "reading": "独立球比完全相关宽 1.86%，其中独立性本身只值 |relative_difference|（约 1e-5 相对），余下约 1.85% 全部来自 CODATA 把 u(mu0) 向上舍入展示成 (20)。"
+ }
+}

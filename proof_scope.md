@@ -1,6 +1,6 @@
 # 证明覆盖面声明（proof scope）
 
-配套论文：`G_alpha_squared_mu_zero_paper.tex`（27 页）
+配套论文：`G_alpha_squared_mu_zero_paper.tex`（28 页）
 声称登记表：`claims.yaml`（C1–C9）
 形式化工件：`G_alpha_mu0_repo/src/G_alpha_squared_mu_zero.lean`、`G_alpha_mu0_repo/src/G_dimension_lattice.lean`
 数值工件：`G_alpha_mu0_repo/results/*.json`
@@ -17,8 +17,9 @@
 | C9(部分) | Π₁、α 的无量纲性 | Lean `Pi1_dimensionless`、`alpha_dimensionless` | 形式证明 |
 | C8(后半) | 给定证书 ⇒ α²μ₀ > G | Lean `cert_gap_pos`、`alpha2mu0_gt_G_of_cert` | 形式证明（证书端点作为整数输入，来历在 Lean 之外） |
 | C2,C4,C5,C6,C8,C9 | 各数值断言 | Lean `Float` + Python mpmath(dps=30/50) + Arb 球算术 | **数值/区间验证**，不是证明 |
-| C8(补充) | 完全相关口径的第二枚 Arb 证书（“μ₀ 由 α 在同一 trace 内导出”） | Arb（`q5_correlated_and_spacing.py`）+ `results/q5_correlated_and_spacing.json` | 数值/区间验证；与独立球口径结论一致，仅 α²μ₀ 侧宽度差 1.9% |
-| C4(补充) | 间距感知零模型的解析精确 p（Voronoi 胞宽加权 ⟺ 最近邻覆盖测度） | 区间合并逐段求长（无 MC） | 数值验证；与 MC 在小数点后四位互为校验 |
+| C8(补充) | 完全相关口径的第二枚 Arb 证书（μ₀ 由 α 在同一 trace 内导出） | Arb（`q5_correlated_and_spacing.py`）+ `results/q5_correlated_and_spacing.json` | 数值/区间验证；与独立球口径结论一致（宽度差 1.86%，源于 CODATA 对 u(μ₀) 的向上舍入展示） |
+| C8(压力) | α 端球口径的三档压力测试（u(α)=1.10/1.132/1.168e-12） | Arb（`q5b_alpha_ball_nist_caliber.py`）+ `results/q5b_alpha_ball_nist_caliber.json` | 三档均判不相交，间距均 115.42 u(G) |
+| C4(补充) | 同一均匀靶零模型的解析精确 p（覆盖测度 = 最近邻被估量的闭式） | 区间合并逐段求长（无 MC，dps=60 复核） | 数值验证；与 MC 在小数点后三位一致（差 0.17 倍标准误） |
 
 Lean 全部定理经 `#print axioms` 逐条核验（2026-10-16 实测，`G_alpha_mu0_repo/src/G_dimension_lattice.lean` 末尾打印九条）：`thm1_monoid` **不依赖任何公理**；`dimMono_eq_zero_iff`、`dimMono_param`、`Pi1_dimensionless`、`alpha_dimensionless`、`no_dimensionless_G` 依赖 `[propext, Classical.choice, Quot.sound]`；`dimG_ne_dim_mu0`、`cert_gap_pos`、`alpha2mu0_gt_G_of_cert` 依赖 `[propext, Quot.sound]`。九条均**无 `sorryAx`**。
 
@@ -42,3 +43,5 @@ Lean 全部定理经 `#print axioms` 逐条核验（2026-10-16 实测，`G_alpha
 - **两枚证书的相关性口径**：独立球（α 与 μ₀ 各取各的球，u_r(α²μ₀)=4.6063×10⁻¹⁰）与完全相关（μ₀=2αh/(e²c)，h/e/c 精确，u_r=3u_r(α)=4.5222×10⁻¹⁰）文中均给出；因 α²μ₀ 侧比 G 侧窄五个数量级，两口径对“是否重合”的判定不产生分歧。
 - 阈值语义：`0.27%`、`0.01`、`0.002` 等阈值只是"通过性判据"，不构成证据强度；实质结论由 §4.4 零模型与 §4.8 认证区间给出。
 - 随机性可复现性：零模型与家族扩展实验固定种子 20261014 / 20261015，重跑逐位一致。
+- **输入球口径**：本文一切区间计算使用 CODATA **展示值的末位**（u(α)=1.1e-12、u(μ₀)=2.0e-16、u(G)=1.5e-15），R4/mpmath 交叉核对已与 q3/q5 对齐到同一组球。由 (20) 与 (11) 的两位展示舍入反推，公共未舍入 u_r ∈ [1.552, 1.576)e-10，即本文 u(α)=1.1e-12 比真值**窄 2.9%--4.5%**（方向不保守）；影响已由 q5b 三档压力测试覆盖（判定不变）。
+- **展示区间的取整方向**：正文所有区间按所列位数**向外**取整，故展示区间恒包含认证区间；本文自查中曾有三处（6.6917625531、1.73126、0.2594%）为向内取整，已改正。
