@@ -20,7 +20,7 @@ claims:
       role: main
       result: pass@2026-10-15
       statement_check: "approved@2026-10-15 by 作者复核（Lean 陈述与正文逐字一致）"
-      artifact: G_alpha_mu0_repo/src/G_dimension_lattice.lean
+      artifact: src/G_dimension_lattice.lean
       notes: "#print axioms thm1_monoid → does not depend on any axioms"
 
   - id: C2
@@ -31,7 +31,7 @@ claims:
       type: mpmath_recompute
       role: main
       result: pass@2026-10-15
-      artifact: G_alpha_mu0_repo/src/verify_numerical.py
+      artifact: src/verify_numerical.py
       notes: "Lean Float 与 mpmath(dps=50) 双通道；阈值 0.27% 仅为通过性判据，不承载证据强度"
 
   - id: C3
@@ -44,7 +44,7 @@ claims:
       role: supporting
       result: pass@2026-10-15
       statement_check: "approved@2026-10-15 by 作者复核"
-      artifact: G_alpha_mu0_repo/src/G_dimension_lattice.lean
+      artifact: src/G_dimension_lattice.lean
       notes: "量纲向量化为 SI 四基本量纲整数指数；解析推导另见 §4.3"
 
   - id: C4
@@ -55,7 +55,7 @@ claims:
       type: numeric_recompute
       role: main
       result: pass@2026-10-15
-      artifact: G_alpha_mu0_repo/results/lambda_enumeration.json
+      artifact: results/lambda_enumeration.json
       notes: "零模型口径见 results/q2_lambda_null_results.json（种子 20261014，可逐位重跑）；p 随家族边界双向漂移 0.011-0.73，非内禀量；同日追加的解析精确 p（区间合并逐段求长，无 MC）为 0.0111/0.0198/0.0322/0.0698/0.1270（dps=60 复核到 1e-14），与 MC 0.12708 是小数点后三位一致 (差 9.2e-5 = 0.17 倍 MC 标准误)；注意均匀靶本身已按 Voronoi 胞宽加权，解析值与 MC 是同一被估量的两种算法；对称 min(2d,w)/R 是错误近似（给 0.1310，本家族 17.15% 间距 < 2d）；0.729 属另一口径（[100,200] 窗口 MC，q3b 种子 20261015），不与本曲线串联；跨 K=5 取最小 p 的 Bonferroni = 0.0555，因家族嵌套只能当敏感性指标，不作频率学 p 值"
 
   - id: C5
@@ -66,7 +66,7 @@ claims:
       type: numeric_recompute
       role: supporting
       result: pass@2026-10-15
-      artifact: G_alpha_mu0_repo/results/q3_arb_results.json
+      artifact: results/q3_arb_results.json
       notes: "Arb 认证区间 [8.9091,8.9093]×10¹⁶ GeV；模型能标为文献量级估计（表 2）"
 
   - id: C6
@@ -77,7 +77,7 @@ claims:
       type: numeric_recompute
       role: supporting
       result: pass@2026-10-15
-      artifact: G_alpha_mu0_repo/results/q3_arb_results.json
+      artifact: results/q3_arb_results.json
       notes: "α²Λ²=1.000004446±7.8×10⁻¹⁰，认证不含 1"
 
   - id: C7
@@ -90,7 +90,7 @@ claims:
       role: main
       result: pass@2026-10-15
       statement_check: "approved@2026-10-15 by 作者复核（Lean 陈述即'指数 h=0 ⇒ a=0'）"
-      artifact: G_alpha_mu0_repo/src/G_dimension_lattice.lean
+      artifact: src/G_dimension_lattice.lean
       notes: "配套 dimMono_param / Pi1_dimensionless / alpha_dimensionless；依赖 [propext, Quot.sound]"
 
   - id: C8
@@ -101,7 +101,7 @@ claims:
       type: numeric_recompute
       role: main
       result: pass@2026-10-16
-      artifact: G_alpha_mu0_repo/results/q3_arb_results.json
+      artifact: results/q3_arb_results.json
       notes: "disjoint 由 Arb 原生 overlaps() 判定；证书回放在 Lean 中为 cert_gap_pos + alpha2mu0_gt_G_of_cert；第二枚完全相关证书见 results/q5_correlated_and_spacing.json（u_r=4.5222e-10、间距 115.42 u(G)、sigma=116.42）；独立球口径 4.6063e-10 只宽 1.86%，实测把 mu0 端球换成传递半径 1.89428e-16 后独立 trace 给 4.52199e-10，与完全相关的 4.52226e-10 只差 0.006%，故 1.86% 里 1.85% 来自 CODATA 把 u(mu0) 向上舍入展示成 (20)；alpha 端球口径压力测试见 results/q5b_alpha_ball_nist_caliber.json（u(alpha)=1.10/1.132/1.168e-12 -> u_r=4.52/4.66/4.80e-10，三档均 disjoint，间距均 115.42 u(G))"
 
   - id: C9
@@ -112,5 +112,5 @@ claims:
       type: numeric_recompute
       role: supporting
       result: pass@2026-10-15
-      artifact: G_alpha_mu0_repo/results/q3_arb_results.json
+      artifact: results/q3_arb_results.json
       notes: "Λ−α⁻¹=3.046×10⁻⁴±2.24×10⁻⁸（不含 0）；(三) 仅限 |p|,|q|≤3，全域属未解丢番图问题"
