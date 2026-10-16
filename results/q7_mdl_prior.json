@@ -1,0 +1,147 @@
+{
+  "inputs": {
+    "alpha_CODATA2022": "0.0072973525643",
+    "u_alpha_abs": "0.0000000000011",
+    "alpha_inv": 137.03599917759013,
+    "u_alpha_inv": 2.065675157766053e-08,
+    "Lambda": 137.03630377587842,
+    "d_obs": 0.0003045982883061564,
+    "epsilon_used": 2.065675157766053e-08
+  },
+  "family": {
+    "definition": "a0 + a1*pi + a2*pi^2 + a3*pi^3, |a_i|<=10, 阶<=3, 非全零",
+    "N_family": 194480,
+    "log2_N": 17.56926227291609
+  },
+  "code_lengths_bits": {
+    "L0_direct": 25.52881136120145,
+    "residual_signed_2d": 14.84800681625738,
+    "residual_single_d": 13.84800681625738,
+    "L_p_readingA_3coef": 13.176952268336283,
+    "L_p_readingB_4coef": 17.569269691115043,
+    "L_search": 17.56926227291609,
+    "L_p_eff_A": 30.746214541252375,
+    "L_p_eff_B": 35.13853196403113
+  },
+  "delta_L_bits": {
+    "a_priori_A": -2.4961477233922125,
+    "a_priori_B": -6.888465146170972,
+    "with_selection_A": -20.065409996308304,
+    "with_selection_B": -24.457727419087064,
+    "a_priori_A_single_window": -1.4961477233922125,
+    "with_selection_A_single_window": -19.065409996308304
+  },
+  "bayes_factor_BF10": {
+    "a_priori_A": 0.1772493542509709,
+    "with_selection_A": 9.114014513110389e-07,
+    "with_selection_B": 4.340006911004948e-08,
+    "convention": "BF10 = 2^{dL}; −log2 BF10 ≈ dL + O(1)"
+  },
+  "breakeven_precision": {
+    "d_required_a_priori": 5.3989849908217176e-05,
+    "d_required_with_selection": 2.7761132202908865e-10,
+    "d_obs_over_d_required_a_priori": 5.641769496006637,
+    "d_obs_over_d_required_with_selection": 1097211.3315833712,
+    "note": "公式要压缩，偏差须小到什么程度；实测 d_obs 比它大几倍/几个数量级"
+  },
+  "family_bound_sweep": [
+    {
+      "B": 2,
+      "N_family": 624,
+      "L_p_bits_3coef": 6.965784284662087,
+      "compresses_a_priori": true,
+      "dL_a_priori_bits": 3.7150202602819817,
+      "dL_with_selection_bits": -5.5703819585802705
+    },
+    {
+      "B": 3,
+      "N_family": 2400,
+      "L_p_bits_3coef": 8.422064766172813,
+      "compresses_a_priori": true,
+      "dL_a_priori_bits": 2.2587397787712575,
+      "dL_with_selection_bits": -8.970078911724627
+    },
+    {
+      "B": 4,
+      "N_family": 6560,
+      "L_p_bits_3coef": 9.509775004326936,
+      "compresses_a_priori": true,
+      "dL_a_priori_bits": 1.171029540617134,
+      "dL_with_selection_bits": -11.508450558888313
+    },
+    {
+      "B": 5,
+      "N_family": 14640,
+      "L_p_bits_3coef": 10.378294855911893,
+      "compresses_a_priori": true,
+      "dL_a_priori_bits": 0.3025096890321777,
+      "dL_with_selection_bits": -13.535118244139227
+    },
+    {
+      "B": 6,
+      "N_family": 28560,
+      "L_p_bits_3coef": 11.101319154423276,
+      "compresses_a_priori": false,
+      "dL_a_priori_bits": -0.4205146094792056,
+      "dL_with_selection_bits": -15.22222296839567
+    },
+    {
+      "B": 7,
+      "N_family": 50624,
+      "L_p_bits_3coef": 11.720671786825555,
+      "compresses_a_priori": false,
+      "dL_a_priori_bits": -1.0398672418814883,
+      "dL_with_selection_bits": -16.667401126354278
+    },
+    {
+      "B": 8,
+      "N_family": 83520,
+      "L_p_bits_3coef": 12.262388523751017,
+      "compresses_a_priori": false,
+      "dL_a_priori_bits": -1.5815839788069468,
+      "dL_with_selection_bits": -17.931418070264193
+    },
+    {
+      "B": 9,
+      "N_family": 130320,
+      "L_p_bits_3coef": 12.743782540330756,
+      "compresses_a_priori": false,
+      "dL_a_priori_bits": -2.0629779953866887,
+      "dL_with_selection_bits": -19.05467697879957
+    },
+    {
+      "B": 10,
+      "N_family": 194480,
+      "L_p_bits_3coef": 13.176952268336283,
+      "compresses_a_priori": false,
+      "dL_a_priori_bits": -2.4961477233922125,
+      "dL_with_selection_bits": -20.065409996308304
+    },
+    {
+      "B": 11,
+      "N_family": 279840,
+      "L_p_bits_3coef": 13.57068586817104,
+      "compresses_a_priori": false,
+      "dL_a_priori_bits": -2.889881323226973,
+      "dL_with_selection_bits": -20.98412399203599
+    },
+    {
+      "B": 12,
+      "N_family": 390624,
+      "L_p_bits_3coef": 13.931568569324174,
+      "compresses_a_priori": false,
+      "dL_a_priori_bits": -3.2507640243801035,
+      "dL_with_selection_bits": -21.826185090174974
+    }
+  ],
+  "B_critical_for_a_priori_compression": {
+    "value": 5.398173174862032,
+    "note": "3·log2(2B+1) < log2(1/(2 d_obs)) 的临界 B；超过则任何家族都不可能先验压缩"
+  },
+  "verdict": {
+    "a_priori": "ΔL = -2.50 bit（读法 A，最偏袒 H1），落在 O(1) 含糊区内 ⇒ 与 q2 的“不显著”一致：不做选择校正时，Λ 的吻合本身不构成压缩证据。",
+    "with_selection": "计入穷举 194480 个候选的选择代价后 ΔL = -20.07 bit（BF10 ≈ 9.11e-07）⇒ 强证据支持“事后选择/巧合”。",
+    "sweep": "对家族上界 B 扫描：B ≥ 6 起，即便完全不计选择代价也无法先验压缩 ⇒ 结论对家族定义不敏感。",
+    "answers_reviewer": "MDL 会不会定性改变 Λ 的判断？不会 —— 它独立复现并**强化**了 q2 零模型的结论（事后选择），只是把家族规模惩罚显式写进单一统计量。"
+  }
+}

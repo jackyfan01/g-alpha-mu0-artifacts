@@ -131,12 +131,12 @@
   \item \textbf{数值验证}（Lean 4 \texttt{Float} + Python mpmath）：对涉及浮点计算的断言（定理~2、4、5、6），使用 IEEE 754 双精度浮点数（Lean \texttt{Float} 类型）进行计算，并用 Python mpmath（dps=30/50）独立重算交叉验证。需注意，数值验证不构成数学证明——它只验证了特定数值输入下的特定精度输出。
   \item \textbf{解析推导}（未形式化）：自然单位制下 $\mu_0$ 量纲重诠释的论证（定理~3 步骤 4--5）仍以解析推导给出。其\textbf{前置事实}（单项式层面的不变量分类）现已形式化，但"赋 $\mu_0$ 以 $[M]^{-2}$ 是否为物理上可接受的假设"属物理论证，不在形式化范围内。
   \item \textbf{认证区间}（Arb 球算术\cite{johansson2017}，§4.8）：以 CODATA 2022 不确定度为输入球，逐步定向舍入，证明 $\alpha^2\mu_0$ 与 $G$ 的区间不相交、$\Lambda \neq \alpha^{-1}$、$\alpha^2\Lambda^2 \neq 1$。mpmath \texttt{mpi}（误差传播包络，非逐舍入认证）仅作交叉核对保留。
-  \item \textbf{穷举枚举 + 零模型检验}（Python，§4.4）：对 $194\,480$ 个低复杂度 $\pi$ 多项式全族穷举，在"靶值与格点无关"的显式零模型下给出 $p$ 值与顺序统计量，并把搜索类扩到 $\pi$ 的有理函数、混合基 $(\pi,e)$ 与半整数幂以检验家族稳健性。
+  \item \textbf{穷举枚举 + 零模型检验}（Python，§4.4）：对 $194\,480$ 个低复杂度 $\pi$ 多项式全族穷举，在"靶值与格点无关"的显式零模型下给出 $p$ 值与顺序统计量，并把搜索类扩到 $\pi$ 的有理函数、混合基 $(\pi,e)$ 与半整数幂以检验家族稳健性；另附 MDL/描述长度先验（Rissanen 两段码），把家族规模惩罚 $\log_2 N$ 折进单一统计量。
 \end{enumerate}
 
 阈值选择说明：各数值检查的判定阈值（如 $0.27\%$、$0.01$、$0.002$）只是\textbf{通过性判据}，不构成证据强度——其中 $0.27\%$ 与实际偏差 $0.2616\%$ 仅差 $3\%$，正是紧贴数据点。本文的实质结论不依赖这些阈值，而由 §4.4 的显式零模型与 §4.8 的认证区间给出。
 
-全部源代码与机器可读结果已公开发布于 \path|https://github.com/jackyfan01/g-alpha-mu0-artifacts|（代码 MIT、论文文本与结果 JSON 及证明工件 CC BY 4.0；仓库内含 \path|paper/| 目录，收录本文 \path|.tex|/\path|.md|/\path|.pdf| 三形态；Zenodo DOI 于首个 release 后写入本节）；发布前的本地同名目录为 \path|G_alpha_mu0_repo/|（含 \path|README.md|、\path|environment.yml|、\path|requirements.txt|、\path|lakefile.lean|、\path|lean-toolchain|）：Lean 侧为 \path|src\G_alpha_squared_mu_zero.lean|（定理~1--6 的数值检查与量纲注释）与 \path|src\G_dimension_lattice.lean|（量纲格与证书回放的形式化）；Python 侧为 \path|src\verify_numerical.py|（全量重算）、\path|src\R3_lambda_search.py|（全族穷举）、\path|src\q2_lambda_null_model.py|（零模型与 $p$ 值）、\path|src\q3b_family_extension.py|（家族稳健性）、\path|src\q3_arb_certified.py|（Arb 认证区间）、\path|src\R4_interval_arithmetic.py|（mpmath 交叉核对）、\path|src\q5_correlated_and_spacing.py|（完全相关证书与间距感知精确 $p$）与 \path|src\q5b_alpha_ball_nist_caliber.py|（$\alpha$ 端球口径的三档压力测试），机器可读结果在 \path|results\*.json|。运行环境：Python 3.13.7、mpmath 1.3.0、numpy 2.4.3、python-flint 0.9.0（Arb 2.x）、Lean 4.33.1；随机实验固定种子（\texttt{q2}: 20261014，\texttt{q3b}: 20261015），重跑逐位复现。
+全部源代码与机器可读结果已公开发布于 \path|https://github.com/jackyfan01/g-alpha-mu0-artifacts|（代码 MIT、论文文本与结果 JSON 及证明工件 CC BY 4.0；仓库内含 \path|paper/| 目录，收录本文 \path|.tex|/\path|.md|/\path|.pdf| 三形态；Zenodo DOI 于首个 release 后写入本节）；发布前的本地同名目录为 \path|G_alpha_mu0_repo/|（含 \path|README.md|、\path|environment.yml|、\path|requirements.txt|、\path|lakefile.lean|、\path|lean-toolchain|）：Lean 侧为 \path|src\G_alpha_squared_mu_zero.lean|（定理~1--6 的数值检查与量纲注释）与 \path|src\G_dimension_lattice.lean|（量纲格与证书回放的形式化）；Python 侧为 \path|src\verify_numerical.py|（全量重算）、\path|src\R3_lambda_search.py|（全族穷举）、\path|src\q2_lambda_null_model.py|（零模型与 $p$ 值）、\path|src\q3b_family_extension.py|（家族稳健性）、\path|src\q3_arb_certified.py|（Arb 认证区间）、\path|src\R4_interval_arithmetic.py|（mpmath 交叉核对）、\path|src\q5_correlated_and_spacing.py|（完全相关证书与间距感知精确 $p$）、\path|src\q5b_alpha_ball_nist_caliber.py|（$\alpha$ 端球口径的三档压力测试）与 \path|src\q6_codata_history.py|（各版 CODATA 输入球的历史回溯证书），机器可读结果在 \path|results\*.json|；各脚本与结果 JSON 的 SHA-256 列于仓库根 \path|MANIFEST.sha256|（由 \path|src\make_manifest.py| 生成、支持 \texttt{--verify} 自校验），可用 \texttt{sha256sum -c MANIFEST.sha256} 逐位核对复现结果。运行环境：Python 3.13.7、mpmath 1.3.0、numpy 2.4.3、python-flint 0.9.0（Arb 2.x）、Lean 4.33.1；随机实验固定种子（\texttt{q2}: 20261014，\texttt{q3b}: 20261015），重跑逐位复现。
 
 %==============================================================================
 \section{结果}
@@ -287,6 +287,39 @@
     \qquad d = 1.600\times10^{-4},
   \]
   比 $\Lambda$ 好 $1.9$ 倍——$\Lambda$ \textbf{不再是全局最优}。而该家族下的偶然概率高达 $p = 0.729$：家族一大，"找到更好的拟合"几乎是必然事件。\textbf{但本文必须同时报告反方向的敏感性检验——缩小家族会让"$p\approx 0.13$ 不显著"翻转。}把系数界从 $\lvert a_i\rvert\le 10$ 分别收紧到 $\le 5$（$N=14\,640$）与 $\le 4$（$N=6\,560$，恰为 $\Lambda=(0,1,1,4)$ 自身的最大系数），在同一 Bonferroni 口径下$p$ 由 $0.132$ 降为 $0.0198$ 与 $0.0111$；解析式 $1-(1-2d/R)^N$ 给出 $0.0196$ 与 $0.0110$（本人 2026-10-16 重跑 $N$ 与值域 $R$ 实算，非引用他人结果）。也就是说：按这套算法，$\Lambda$ 在\textbf{更低复杂度界下反而是"显著"的}，而 $p$ 值随家族边界\textbf{双向漂移}（扩族升到 $0.17$--$0.73$，缩族降到 $0.011$）。因此"$p\approx 0.13$"不是该构造的内禀属性，任何单边引用都会误导。这从反面印证了本文的定性：$\Lambda$ 的"同族最优"是\textbf{家族规模}的产物，不是 $\alpha^{-1}$ 的几何必然。任何以"$\pi$ 的某个组合凑出 137"为卖点的构造，都必须在扩大家族后重新检验——而扩大之后总有更"好"的构造出现，这正是数值命理学（numerology）无法自证的结构性原因。
+  \item \textbf{把家族规模惩罚折进单一统计量：MDL / 描述长度先验}。外审建议给整数系数家族一个 MDL（Rissanen 两段码）或 Kolmogorov 型先验，把"家族越大越容易撞上"这件事综合成一个数，并问它会不会\textbf{定性改变} $\Lambda$ 的判断。本文照做（脚本 \texttt{src/q7\_mdl\_prior.py}，工件 \texttt{results/q7\_mdl\_prior.json}）。设想把 $\alpha^{-1}$ 传给一个知道了你所用家族的接收方，精度取 $\varepsilon = u(\alpha^{-1}) = 2.066\times10^{-8}$（CODATA 2022）：
+  \begin{enumerate}
+    \item \textbf{无结构码}（$H_0$）：直接传 $\alpha^{-1}$，代价 $L_0 = \log_2(1/\varepsilon) = 25.53$ 比特；
+    \item \textbf{用公式的码}（$H_1$）：先传公式下标 $L_p$ 比特，再传有符号残差 $\delta = \alpha^{-1}-\Lambda$（$|\delta| = d_{\mathrm{obs}}$，落在宽 $2d_{\mathrm{obs}}$ 的窗口内、仍需精度 $\varepsilon$），残差代价 $\log_2(2d_{\mathrm{obs}}/\varepsilon) = 14.85$ 比特，合计 $L_1 = L_p + 14.85$。
+  \end{enumerate}
+  长度差 $\Delta L = L_0 - L_1 = \log_2\!\bigl(1/(2d_{\mathrm{obs}})\bigr) - L_p$；$\Delta L>0$ 表示公式\textbf{压缩}了描述、支持 $H_1$。两段码长度差与贝叶斯因子的标准关系为 $-\log_2 \mathrm{BF}_{10} \approx \Delta L + O(1)$，故 $|\Delta L| \lesssim 2$ 比特落在 $O(1)$ 的含糊区内，只能算"无证据"。写出 $\Lambda = 4\pi^3+\pi^2+\pi$ 只需\textbf{三个}非零系数（$\{4,1,1\}$，幂次固定取 $1,2,3$——这是\textbf{最偏袒 $H_1$} 的读法；若按四个系数 $a_0..a_3$ 逐个计价，$L_p$ 更大、结论只会更强），故 $L_p = 3\log_2 21 = 13.18$ 比特。代入得
+  \[
+    \Delta L_{\text{先验}} = \log_2\frac{1}{2\times3.046\times10^{-4}} - 13.18 = -2.50~\text{比特},\qquad \mathrm{BF}_{10} = 2^{\Delta L} = 0.177 .
+  \]
+  （把残差窗口从 $2d_{\mathrm{obs}}$ 改成单边 $d_{\mathrm{obs}}$ 只把 $\Delta L$ 平移 $+1$ 比特，得 $-1.50$；两种约定都在 $O(1)$ 内，结论不变。）也就是说：\textbf{若完全不计"我们在一大堆公式里挑过"这件事，$\Lambda$ 的吻合与随机取一个数没有可区分的压缩证据}——这与上面 $p_{\mathrm{exact}} = 0.127$ 的零模型结论方向一致。
+  \par\medskip\noindent\textbf{计入选择代价后结论变得决定性}。上面的 $L_p$ 只算了"写出这个公式"的代价，没算"在多大一堆公式里挑出它"。$R3$ 穷举的家族规模 $N = 21^4-1 = 194\,480$，等于给假设 $N$ 次机会，故 $L_p^{\text{eff}} = L_p + \log_2 N = 13.18 + 17.57 = 30.75$ 比特，于是
+  \[
+    \Delta L_{\text{含选择}} = 10.68 - 30.75 = -20.07~\text{比特},\qquad \mathrm{BF}_{10} = 9.1\times10^{-7},
+  \]
+  \textbf{强证据支持"事后选择"}。这正是外审要的"把家族规模惩罚折进单一统计量"：$\log_2 N$ 就是那个惩罚项，它比 $L_p$ 本身还大（$17.57$ vs $13.18$ 比特）——\textbf{"我们能写出 $\Lambda$"这件事的代价，主要不是公式复杂，而是我们搜过的候选太多。}
+  \par\medskip\noindent\textbf{对家族边界不敏感}。把系数界 $B$ 从 $2$ 扫到 $12$（$N = (2B+1)^4-1$），先验压缩的临界条件是 $3\log_2(2B+1) < \log_2\!\bigl(1/(2d_{\mathrm{obs}})\bigr)$，即 $B_{\text{crit}} = 5.40$：
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{@{}rrrrrr@{}}
+  \toprule
+  $B$ & $N$ & $L_p$ & \textbf{先验} $\Delta L$ & \textbf{含选择} $\Delta L$ & \textbf{先验压缩?} \\
+  \midrule
+  2 & 624 & 6.97 & $+3.72$ & $-5.57$ & 是 \\
+  4 & 6\,560 & 9.51 & $+1.17$ & $-11.51$ & 是 \\
+  5 & 14\,640 & 10.38 & $+0.30$ & $-13.54$ & 是 \\
+  6 & 28\,560 & 11.10 & $-0.42$ & $-15.22$ & \textbf{否} \\
+  8 & 83\,520 & 12.26 & $-1.58$ & $-17.93$ & 否 \\
+  10 & 194\,480 & 13.18 & $-2.50$ & $-20.07$ & 否 \\
+  \bottomrule
+  \end{tabular}
+  \end{center}
+  \noindent 即 $B\ge6$ 起\textbf{即便完全不记选择代价也无法先验压缩}；而一旦计入 $\log_2 N$，全部 $B\ge2$ 的家族都给出 $\Delta L<0$（$B=2$ 时已是 $-5.57$ 比特）。换个角度问"公式要多准才划算"：先验下需 $d_{\mathrm{obs}} < 5.40\times10^{-5}$（实测偏差是它的 $5.6$ 倍），计入选择后需 $d_{\mathrm{obs}} < 2.78\times10^{-10}$（实测是它的 $1.1\times10^{6}$ 倍）。因此"$\Lambda$ 的吻合能压缩 $\alpha^{-1}$ 的描述"这一说法，对任何候选数 $\gtrsim 6$ 的家族都不成立。
+  \par\medskip\noindent\textbf{回答外审的原问题}：MDL 会不会定性改变 $\Lambda$ 的判断？\textbf{不会}。它独立复现并\textbf{强化}了本条的零模型结论——该吻合是事后选择的结果，不是 $\alpha^{-1}$ 由纯几何决定的证据——只是把原本分散在"家族边界敏感性"里的惩罚，压缩成了 $\log_2 N$ 这一个显式项。
 \end{enumerate}
 
 \subsection{定理 5：$M^*c^2$ 与大统一能标的对应（模型依赖）}
@@ -295,30 +328,29 @@
 \begin{equation}
   M^* c^2 = \frac{M_P c^2}{\Lambda} = 8.909\times10^{16}~\text{GeV},
 \end{equation}
-该数值与\textbf{特定取法}的"GUT 能标" $E_\text{GUT} \approx 8.9\times10^{16}$~GeV 偏差 $< 1\%$。但"GUT 能标"并非单一数值，而是各具体统一模型重整化群拟合的产物；GUT 即 Grand Unified Theory（大统一理论），其能标不是可观测量，换模型就会移动（见表~\ref{tab:gut}）。
+原文称该值与“GUT 能标”偏差 $< 1\%$。但“GUT 能标”并非可观测量，而是具体统一模型重整化群（RG）拟合的产物。本文用一圈 RG 方程\textbf{实算}（脚本 \texttt{src/q8\_gut\_running.py}，工件 \texttt{results/q8\_gut\_running.json}）：取 PDG 2022 输入，解 MSSM 的 $\alpha_1(M_X)=\alpha_2(M_X)$，得 $M_X \in [0.50,1.41]\times10^{16}$~GeV（SUSY 阈值 $M_{\rm SUSY}\in[0.3,10]$~TeV 扫描）。$M^*c^2$ 比该区间高 $6.3$--$17.9$ 倍，\textbf{落在全部候选之外}；即便改用二圈结果 $M_X=(1.05\pm0.07)\times10^{16}$~GeV\cite{bourilkov2015}，仍高出约 $8.5$ 倍。
 \end{theorem}
 
 \begin{table}[h]
 \centering
-\caption{$M^*c^2 = 8.909\times10^{16}$~GeV 与若干典型 GUT 模型能标的比较（模型能标为量级估计）}
+\caption{MSSM 规范耦合统一的\textbf{实算}能标（一圈 RGE + $M_{\rm SUSY}$ 阈值扫描）与 $M^*c^2$ 的比较}
 \label{tab:gut}
 \footnotesize
-\begin{tabular}{@{}lcc@{}}
+\begin{tabular}{@{}ccccc@{}}
 \toprule
-\textbf{统一模型} & \textbf{GUT 能标 (GeV)} & \textbf{与 $M^*c^2$ 的比} \\
+$M_{\rm SUSY}$ (TeV) & $M_X$ (GeV) & $\alpha_{\rm GUT}^{-1}$ & $\alpha_3^{-1}\!-\!\alpha_1^{-1}$ & $M^*c^2/M_X$ \\
 \midrule
-最小非超对称 SU(5) & $\sim 10^{15}$ & $M^*c^2$ 高约 $89$ 倍 \\
-最小 SO(10) & $\sim 10^{16}$ & $M^*c^2$ 高约 $8.9$ 倍 \\
-SUSY SU(5) / MSSM 规范耦合统一 & $\sim 2\times10^{16}$ & $M^*c^2$ 高约 $4.5$ 倍 \\
-质子衰变实验下限 & $M_X \gtrsim 3\times10^{15}$（$X$ 玻色子质量） & — \\
-原文所引靶值 & $8.9\times10^{16}$ & 偏差 $< 1\%$ \\
+$0.3$ & $1.41\times10^{16}$ & $25.2$ & $-0.34$ & $6.3$ \\
+$1.0$ & $9.85\times10^{15}$ & $26.0$ & $-0.60$ & $9.0$ \\
+$2.8$ & $7.25\times10^{15}$ & $26.8$ & $-0.82$ & $12.3$ \\
+$10$ & $4.96\times10^{15}$ & $27.7$ & $-1.09$ & $17.9$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\noindent 表中模型能标为文献中的常引量级估计（综述见 \cite{nath2007}）；MSSM = Minimal Supersymmetric Standard Model（最小超对称标准模型），$X$ 玻色子为重子数破坏的规范玻色子。下限来自质子衰变实验搜寻，故为间接界限而非直接测量。\par\medskip
+\noindent 一圈系数 SM/MSSM 分别为 $(41/10,-19/6,-7)$ 与 $(33/5,1,-3)$（统一模型与能标综述见 \cite{nath2007}）。\textbf{主结论}：$M_X$ 随未知的 SUSY 阈值移动约 $2.8$ 倍，而输入测量误差只贡献 $0.9\%$——“GUT 能标”的不确定性\textbf{由模型而非测量决定}。对照：最小非超对称 SU(5) 场景（全程 SM 系数）三耦合根本不相交，$\alpha_1,\alpha_2$ 在 $1.03\times10^{13}$~GeV 相交时 $\alpha_3^{-1}$ 偏离 $5.58$。\par\medskip
 
-\noindent\textbf{数值检查}：\texttt{PASS}（数值本身 $8.909\times10^{16}$~GeV 无误，Arb 认证区间 $[8.9091,8.9093]\times10^{16}$~GeV；但"对应"的靶值选取是模型依赖的，见 §5.5）。
+\noindent\textbf{数值检查}：\texttt{PASS}（$M^*c^2=8.909\times10^{16}$~GeV 无误，Arb 区间 $[8.9091,8.9093]\times10^{16}$~GeV；RG 数值见上表，由 \texttt{q8\_gut\_running.py} 复跑）。
 
 \subsection{定理 6：$G \approx \alpha^2/M^{*2}$ 的自洽性}
 
@@ -371,7 +403,7 @@ $\alpha^2\mu_0$ & $\mathsf{M\,L\,T^{-2}I^{-2}}$，$6.6918\times10^{-11}$ & $1$�
 
 \noindent 表~\ref{tab:units} 最后一行是全部问题的核心：$\alpha^2\mu_0$ 的\textbf{数值}在 SI 里恰好与 $G$ 同量级（$6.69$ vs $6.67$，且都带 $10^{-11}$ 量级），但这纯属巧合——它的\textbf{量纲} $\mathsf{M\,L\,T^{-2}I^{-2}}$ 与 $G$ 的 $\mathsf{L^{3}M^{-1}T^{-2}}$ 不同，换到 CGS 或自然单位制后两者立刻分处不同量纲（$5.3\times10^{-5}$ 无量纲 vs $10^{-8}$ 有量纲 / $[M]^{-2}$），比较失去意义。
 
-\textbf{（一）CGS 高斯制中的检验}。CGS 高斯制中不存在独立的 $\mu_0$（其值被吸收进电荷单位定义，$\mu_0^{\text{Gauss}} = 1$ 无量纲），$G = 6.6743\times10^{-8}$~cm$^3$\,g$^{-1}$\,s$^{-2}$，而 $\alpha^2 = 5.3251\times10^{-5}$ 无量纲。"$G \approx \alpha^2\mu_0$"在 CGS 中\textbf{没有对应表达式}——左边是 $10^{-8}$ 量级的有量纲数值，右边是 $10^{-5}$ 量级的无量纲数值，比较无意义。SI 中的"数值相近"因此是单位制产物（unit artefact）。
+\textbf{（一）CGS 高斯制中的检验}。CGS 高斯制中不存在独立的 $\mu_0$（其值被吸收进电荷单位定义，$\mu_0^{\text{Gauss}} = 1$ 无量纲），$G = 6.6743\times10^{-8}$~cm$^3$\,g$^{-1}$\,s$^{-2}$，而 $\alpha^2 = 5.3251\times10^{-5}$ 无量纲。"$G \approx \alpha^2\mu_0$"在 CGS 中\textbf{没有对应表达式}——左边是 $10^{-8}$ 量级的有量纲数值，右边是 $10^{-5}$ 量级的无量纲数值，比较无意义。SI 中的"数值相近"因此是单位制产物（unit artefact）。$\mu_0$、$\varepsilon_0$ 在 Gaussian/HL 中被\textbf{吸收为纯数 1} 的来历、以及"量纲不匹配不依赖 SI 四维基"的形式化，见附录~E。
 
 \textbf{（二）真正的无量纲不变量}。由 $G$、$\alpha$ 与一个质量（如电子质量 $m_e$）可构造单位制无关的引力耦合常数
 \begin{equation}
@@ -400,13 +432,14 @@ $\alpha^2\mu_0$ & $\mathsf{M\,L\,T^{-2}I^{-2}}$，$6.6918\times10^{-11}$ & $1$�
   \item \texttt{dimG\_ne\_dim\_mu0}：$[G] \neq [\mu_0]$；因 $\alpha$ 无量纲，$[\alpha^2\mu_0] = [\mu_0]$，故 SI 中的量纲矛盾是\textbf{可判定}事实。
 \end{enumerate}
 
-\noindent 附录~D 清单中的全部定理均已逐条 \texttt{\#print axioms} 核验（2026-10-16 实测），九条全部无 \texttt{sorryAx}：
+\noindent 附录~D 清单中的全部定理均已逐条 \texttt{\#print axioms} 核验（2026-10-17 复测），十二条全部无 \texttt{sorryAx}：
 \begin{itemize}
   \item \texttt{thm1\_monoid}：\textbf{不依赖任何公理}；
   \item 五条量纲判定链依赖 \texttt{propext}、\texttt{Classical.choice} 与 \texttt{Quot.sound} 三条基础公理：
         \texttt{dimMono\_eq\_zero\_iff}； \texttt{dimMono\_param}； \texttt{Pi1\_dimensionless}；
         \texttt{alpha\_dimensionless}； \texttt{no\_dimensionless\_G}。
   \item \texttt{dimG\_ne\_dim\_mu0}、\texttt{cert\_gap\_pos}、\texttt{alpha2mu0\_gt\_G\_of\_cert}：依赖 \texttt{[propext, Quot.sound]}。
+  \item 附录~E 的 Gaussian 三条：\texttt{gauss\_mu0\_dimensionless} \textbf{不依赖任何公理}（\texttt{rfl}）；\texttt{gauss\_alpha\_dimensionless} 依赖 \texttt{[propext, Classical.choice, Quot.sound]}；\texttt{gauss\_dimG\_ne\_dim\_alpha2mu0} 依赖 \texttt{[propext, Quot.sound]}。
 \end{itemize}
 \noindent 仍需说明其边界：形式化覆盖的是\textbf{单项式}（幂积）层面的不变量分类，不是任意表达式；把结论推广到含超越函数的表达式类需要额外的量纲不变性假设，本文不做此推广。
 
@@ -435,9 +468,30 @@ $\alpha^2\mu_0$ & $\mathsf{M\,L\,T^{-2}I^{-2}}$，$6.6918\times10^{-11}$ & $1$�
 \end{equation}
 （若改用 CODATA 2022 展示的舍入值 $u_r^{(2022)}(G)=2.2\times10^{-5}$，得 $119\sigma$；两者均远超任何显著性阈值。本式左端的 $2.247\times10^{-5}$ 是\textbf{未舍入}值 $u/G$，二者不矛盾，只是位数不同。）
 
-\textbf{对 $G$ 未来调整的稳健性}：$G$ 是唯一"多组高精度实验彼此不相容"的基本常数。过去二十年间的 11 个精密测量值被 CODATA 2014 全部收录，推荐值 $G = 6.67408(31)\times10^{-11}$ 的相对不确定度 $u_r^{(2014)}(G) = 4.7\times10^{-5}$，是各基本常数中最大者之一\cite{li2020g}；更早的 CODATA 1998 调整因各次测量互相矛盾，把 $u_r^{(1998)}(G)$ 从 1986 年的 $1.28\times10^{-4}$ \textbf{放大}到 $1.5\times10^{-3}$（约 $12$ 倍）\cite{codata1998}。结论必须对这种膨胀做压力测试：
+\textbf{对 $G$ 未来调整的稳健性（按各版 CODATA 输入球实跑）}：$G$ 是唯一"多组高精度实验彼此不相容"的基本常数。过去二十年间的 11 个精密测量值被 CODATA 2014 全部收录，推荐值 $G = 6.67408(31)\times10^{-11}$ 的相对不确定度 $u_r^{(2014)}(G) = 4.7\times10^{-5}$，是各基本常数中最大者之一\cite{li2020g}；更早的 CODATA 1998 调整因各次测量互相矛盾，把 $u_r^{(1998)}(G)$ 从 1986 年的 $1.28\times10^{-4}$ \textbf{放大}到 $1.5\times10^{-3}$（约 $12$ 倍）\cite{codata1998}。结论必须对这种膨胀做压力测试。前面各段的证书只用 CODATA 2022 一组输入球；为回答"判定是否只对最新一版成立"，本文把 CODATA 2010/2014/2018/2022 \textbf{各自公布}的 $\alpha$、$\mu_0$、$G$ 输入球分别喂进同一条 Arb trace 重跑（脚本 \texttt{src/q6\_codata\_history.py}，工件 \texttt{results/q6\_codata\_history.json}；原始数值取自 NIST 归档 ASCII 表 \texttt{physics.nist.gov/cuu/Constants/ArchiveASCII/allascii\_YYYY.txt}，2022 一版无归档表、取自 §2 表~\ref{tab:constants}）：
 
-其一，\textbf{中心值层面}：偏差 $2616\,\mathrm{ppm}$（$=2.6164\times10^{-3}$）远大于历次 CODATA 推荐值之间的移动——2014 $\to$ 2022 仅 $33\,\mathrm{ppm}$，而历史上最大的一次（1998 $\to$ 2002，$6.673(10)\to 6.6742(10)\times10^{-11}$）也只有约 $180\,\mathrm{ppm}$；两者都小于偏差的 $1/14$，故推荐值本身如何移动都不会与 $\alpha^2\mu_0$ 相遇。其二，\textbf{不确定度层面}：若把 $u(G)$ 人为取到史上最夸张的 $1500\,\mathrm{ppm}$（1998 年情形），显著性由 $116\sigma$ 降为 $2616/1500 \approx 1.7\sigma$。必须诚实承认：$1.7\sigma$（双侧 $p \approx 0.09$）\textbf{落在"与相等假设相容"的范围内}，那种情形下"$\alpha^2\mu_0 \neq G$"将不再是一条可断言的事实。可见 $116\sigma$ 是\textbf{依赖计量能力}的结论，其成立前提是当前 $G$ 的相对不确定度仅为 $2.2\times10^{-5}$，它不是先验定理、也不免疫未来测量格局的变化。但即使真退到 $1.7\sigma$，§4.7 的量纲不可比性\textbf{不受影响}——数值上的相容也不会使"$G = \alpha^2\mu_0$"成为单位制无关的陈述。
+\begin{table}[h]
+\centering
+\caption{各版 CODATA 输入球下的 $\alpha^2\mu_0$ vs $G$ 证书。2010/2014 处于旧 SI，$\mu_0 \equiv 4\pi\times10^{-7}$ 为定义值（零不确定度），故 $\alpha^2\mu_0$ 的不确定度仅来自 $\alpha$；2018/2022 处于新 SI，取完全相关 trace $\alpha^2\mu_0 = 2\alpha^3h/(e^2c)$。间距 $=\alpha^2\mu_0$ 区间下界减 $G$ 区间上界。}
+\label{tab:codata_history}
+\footnotesize
+\begin{tabular}{@{}llcccccc@{}}
+\toprule
+\textbf{版本} & \textbf{SI} & $u_r(\alpha)$ & $u_r(\alpha^2\mu_0)$ & $G\ [10^{-11}]$ & $u_r(G)$ & \textbf{间距} & $/\;u(G)$ \\
+\midrule
+2010 & 旧 & $3.29\times10^{-10}$ & $6.58\times10^{-10}$ & 6.673\,84(80) & $1.20\times10^{-4}$ & $1.712\times10^{-13}$ & 21.4 \\
+2014 & 旧 & $2.33\times10^{-10}$ & $4.66\times10^{-10}$ & 6.674\,08(31) & $4.64\times10^{-5}$ & $1.737\times10^{-13}$ & 56.0 \\
+2018 & 新 & $1.51\times10^{-10}$ & $4.52\times10^{-10}$ & 6.674\,30(15) & $2.25\times10^{-5}$ & $1.731\times10^{-13}$ & 115.4 \\
+2022 & 新 & $1.51\times10^{-10}$ & $4.52\times10^{-10}$ & 6.674\,30(15) & $2.25\times10^{-5}$ & $1.731\times10^{-13}$ & 115.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{四版全部判不相交}。更值得注意的是这张表的结构：间距在四版之间几乎不动（$1.71$--$1.74\times10^{-13}$，变化 $<1.5\%$），而 $u(G)$ 缩了 $5.3$ 倍——因为间距由 $0.26\%$ 的\textbf{中心值偏移}主导，而非由不确定度主导。于是显著性随计量进步\textbf{单调上升}：$21\sigma$（2010）$\to 56\sigma$（2014）$\to 115\sigma$（2018/2022）。这给出一个比"$116\sigma$"更稳的说法：该判定随 $G$ 的测量精度提高而变强，不是一次偶然的阈值效应。
+
+\noindent\textbf{要动多少才重合}。以 2022 版 $\alpha$ 端为基准反向求解：使两区间相接，$G$ 的中心值须上移 $+0.262\%$（$=2616\,\mathrm{ppm}$，约 $116$ 个当前 $u(G)$），或中心值钉住不动而把 $u(G)$ 撑到 $2616\,\mathrm{ppm}$（$=116$ 倍当前值）。两个门槛都与历史尺度对照：其一，\textbf{中心值层面}：所需 $2616\,\mathrm{ppm}$ 是历次 CODATA 推荐值之间\textbf{最大相邻位移}（$2014 \to 2010$ 为 $36\,\mathrm{ppm}$，$2018 \to 2014$ 为 $33\,\mathrm{ppm}$）的 $73$ 倍；即便取最长跨度 $2022$ 对 $2010$ 的累计位移 $69\,\mathrm{ppm}$，也只有门槛的 $1/38$。故单靠推荐值的正常移动碰不上 $\alpha^2\mu_0$。其二，\textbf{不确定度层面}：所需 $2616\,\mathrm{ppm}$ 是史上最夸张的 $1998$ 年情形（$1500\,\mathrm{ppm}$，实测 $u_r^{(1998)}(G)=1.50\times10^{-3}$）的 $1.74$ 倍——即\textbf{即使 $u_r(G)$ 真退回到 1998 年的峰值，认证口径下两区间仍不相交}（实测：中心钉住 2022 值、$u_r(G)=1500\,\mathrm{ppm}$ 时间距 $7.45\times10^{-14}=0.74\,u(G)>0$）。
+
+\noindent\textbf{但必须把两种口径分开读}（与本节开头"两种口径必须分开说"呼应）：上段"$1500$ ppm 仍不相交"是\textbf{认证口径}（把 $u$ 当硬夹逼）的结论；若改读\textbf{统计口径}（把 $u$ 当 $1\sigma$），同一组数字给出 $2616/1500 \approx 1.7\sigma$，而 $1.7\sigma$（双侧 $p \approx 0.09$）\textbf{落在"与相等假设相容"的范围内}——那种情形下"$\alpha^2\mu_0 \neq G$"将不再是一条可断言的\textbf{统计}事实。两个读法不矛盾：认证口径问"两球是否隔开"，统计口径问"隔开是否显著"。可见 $116\sigma$ 是\textbf{依赖计量能力}的结论，其成立前提是 $G$ 的相对不确定度仅为 $2.2\times10^{-5}$；它不是先验定理、也不免疫未来测量格局的变化。但即使真退到 $1.7\sigma$，§4.7 的量纲不可比性\textbf{不受任何影响}——数值上的相容也不会使"$G = \alpha^2\mu_0$"成为单位制无关的陈述。
 
 \textbf{与 mpmath 包络的一致性}：作为交叉核对，\texttt{mpi}（误差传播包络，非逐舍入认证）给出同样的不相交结论，间距 $1.7312553097\times10^{-13}$ 与 Arb 的 $1.7312553097\times10^{-13}$ 在小数点后 8 位一致。\textbf{一致的前提是两者用同一组输入球}：本文一度让 R4 用 $u_r(\alpha)=1.6\times10^{-10}$（即 $u(\alpha)=1.1676\times10^{-12}$），那时两法只在第 6 位一致，残差 $1.2\times10^{-21}$ 纯属口径差而非算术差；现已把 R4 与 q3/q5 对齐为展示末位口径（脚本 \texttt{R4\_interval\_arithmetic.py}，工件 \texttt{results/mpi\_crosscheck.json}）。
 
@@ -469,7 +523,7 @@ $\alpha^2\mu_0$ & $\mathsf{M\,L\,T^{-2}I^{-2}}$，$6.6918\times10^{-11}$ & $1$�
 定理 2 & $G \approx \alpha^2\mu_0$ (SI) & Lean + mpmath + Arb & 单位制依赖的数值巧合 \\
 定理 3 & $[G] = [M]^{-2}$, $[\alpha^2\mu_0]_{\text{nat}} = 1$ & 解析 + Lean & 量纲分析（需重释 $\mu_0$） \\
 定理 4 & $\Lambda \approx 137 \approx \alpha^{-1}$ & 穷举 + 零模型 & 全族最优；$p$ 非内禀（§4.4） \\
-定理 5 & $M^*c^2 \approx E_\text{GUT}$ & Lean + mpmath & 定义导出；靶值模型依赖 \\
+定理 5 & $M^*c^2 \approx E_\text{GUT}$ & Lean + RGE & 定义导出；靶值模型依赖 \\
 定理 6 & $G \approx \alpha^2/M^{*2}$ & Lean + mpmath & 由 $\Lambda \approx \alpha^{-1}$ 保证 \\
 §4.7 & $\Pi_1 = Gm_e^2/\hbar c = 1.7518(5)\times10^{-45}$ & Lean + Arb & 唯一合法不变量，与 $\alpha$ 不贴近 \\
 §4.8 & $\alpha^2\mu_0$ 与 $G$ 区间不相交 & Arb 球算术 & SI 内不相交，$116\sigma$ \\
@@ -509,7 +563,7 @@ $\alpha^2\mu_0$ & $\mathsf{M\,L\,T^{-2}I^{-2}}$，$6.6918\times10^{-11}$ & $1$�
 
 \subsection{关于 $M^*c^2$ 与 GUT 能标的对应}
 
-定理~5 中 $M^*c^2 = 8.909\times10^{16}$~GeV 的数值本身无争议，但"对应大统一能标"这一表述\textbf{依赖靶值的选取}。GUT 能标不是自然界的单一可观测量，而是具体统一模型（含其粒子含量与重整化群跑动）的拟合输出：最小非超对称 SU(5) 的规范耦合统一能标约 $10^{15}$~GeV，最小 SO(10) 约 $10^{16}$~GeV，而 MSSM/SUSY SU(5) 情形约 $2\times10^{16}$~GeV（表~\ref{tab:gut}）。$8.9\times10^{16}$~GeV 落在所有主流模型能标的同数量级区间（$10^{15}$--$10^{17}$~GeV）偏上端，但与任何一个具体模型都不吻合到 $1\%$——原文的 $<1\%$ 偏差是相对"$8.9\times10^{16}$"这一未指明模型出处的靶值计算的。若不指定模型，"GUT 能标"只是一个跨三个数量级的范围，$M^*c^2$ 落入其中是平凡结论。
+定理~5 中 $M^*c^2 = 8.909\times10^{16}$~GeV 的数值本身无争议，但“对应大统一能标”这一表述\textbf{依赖靶值的选取}。GUT 能标不是自然界的单一可观测量，而是具体统一模型（含其粒子含量与重整化群跑动）的拟合输出（规范耦合二圈统一的经典分析见 \cite{amaldi1991}）。本文用一圈 RG 方程\textbf{实算}（脚本 \texttt{src/q8\_gut\_running.py}，工件 \texttt{results/q8\_gut\_running.json}）：在 PDG 2022 的 $\alpha_s(M_Z)=0.1179$、$\sin^2\theta_W=0.23122$、$\alpha_{\rm em}^{-1}(M_Z)=127.952$ 下，SM 段（$b=(41/10,-19/6,-7)$）跑到 $M_{\rm SUSY}$，MSSM 段（$b=(33/5,1,-3)$）解 $\alpha_1(M_X)=\alpha_2(M_X)$。结果（表~\ref{tab:gut}）：$M_X$ 随 $M_{\rm SUSY}\in[0.3,10]$~TeV 在 $[0.50,1.41]\times10^{16}$~GeV 间移动，而三输入的测量误差只使 $M_X$ 变动 $0.9\%$——\textbf{能标的不确定性由未知的 SUSY 阈值主导}（约 $2.8$ 倍），远超测量误差。作为对照，最小非超对称 SU(5) 场景（全程 SM）三耦合并不相交：$\alpha_1,\alpha_2$ 在 $1.03\times10^{13}$~GeV 相交时 $\alpha_3^{-1}$ 偏离 $5.58$。$M^*c^2 = 8.909\times10^{16}$~GeV 比全部 MSSM 候选高 $6.3$--$17.9$ 倍，\textbf{落在区间之外}；即使取二圈分析所得 $M_X = (1.05\pm0.07)\times10^{16}$~GeV\cite{bourilkov2015}（本文一圈值在$M_{\rm SUSY}=2.8$~TeV 为 $7.25\times10^{15}$~GeV，二圈使之上移约 $40\%$），仍高出约 $8.5$ 倍。结论：原文的 $<1\%$ 偏差是相对未指明模型出处的靶值计算的；“GUT 能标”本身跨三个数量级且由模型而非测量决定，$M^*c^2$ 是否“对应”它不是一个有内容的物理命题。
 
 此外，这一对应链条本身依赖于 $\Lambda \approx \alpha^{-1}$：
 \[
@@ -530,16 +584,16 @@ $\alpha^2\mu_0$ & $\mathsf{M\,L\,T^{-2}I^{-2}}$，$6.6918\times10^{-11}$ & $1$�
 
   \item \textbf{量纲分析（需重新诠释，核心部分已机械化）}：在标准自然单位制下，$[G] = [M]^{-2}$ 而 $[\alpha^2\mu_0] = 1$，两者并不相等。要使 $G \approx \alpha^2\mu_0$ 量纲齐次，须重新赋予 $\mu_0$ 以 $[M]^{-2}$ 量纲——这是标准场论中没有依据的物理假设（Sakharov 诱导引力\cite{sakharov1967}提供动机传统但不提供该公式），而非单纯切换单位制的效果。"不引入质量标度则 $G$ 不可能出现在任何无量纲单项式中"已在 Lean 中形式化（\texttt{no\_dimensionless\_G}，附录~D），故 §4.7 的否定结论不再是解析推导而是机器检查的定理。
 
-  \item \textbf{几何-经验吻合（显著性随家族边界双向漂移，不是内禀量）}：$\Lambda = 4\pi^3+\pi^2+\pi = 137.03630$ 与 $\alpha^{-1} = 137.035999$ 仅差 $3.0\times10^{-4}$，是全部数值关系的枢纽。$194\,480$ 个低复杂度 $\pi$ 多项式全族穷举显示 $\Lambda$ 为同族全局最优（次优差 $12$ 倍），但在显式零模型下 $p \approx 0.13$（各口径 $0.123$--$0.340$ 一致），\textbf{统计不显著}；反向收紧家族（$\lvert a_i\rvert\le4$，$N=6\,560$）时同一算法给出 $p\approx 0.011$，此时"$\Lambda$ 恰好命中"\textbf{反而显著}；因此本文对 (d) 的表述口径是"显著性对人为家族边界敏感（$0.011$--$0.73$），不构成内禀证据"，而非单点"$p=0.13$ 不显著"；把基扩到 $(\pi, e)$ 后出现 $-1-2\pi+5\pi^2+3\pi^3-2e+e^2 = 137.036159$，比 $\Lambda$ 好 $1.9$ 倍——"最优"本身是家族规模的函数。Arb 认证区间另给出 $\Lambda \neq \alpha^{-1}$ 的严格判定。该吻合在性质与命运上与 Eddington 对 $\alpha^{-1} \approx 137$ 的纯理论猜测同类。
+  \item \textbf{几何-经验吻合（显著性随家族边界双向漂移，不是内禀量）}：$\Lambda = 4\pi^3+\pi^2+\pi = 137.03630$ 与 $\alpha^{-1} = 137.035999$ 仅差 $3.0\times10^{-4}$，是全部数值关系的枢纽。$194\,480$ 个低复杂度 $\pi$ 多项式全族穷举显示 $\Lambda$ 为同族全局最优（次优差 $12$ 倍），但在显式零模型下 $p \approx 0.13$（各口径 $0.123$--$0.340$ 一致），\textbf{统计不显著}；反向收紧家族（$\lvert a_i\rvert\le4$，$N=6\,560$）时同一算法给出 $p\approx 0.011$，此时"$\Lambda$ 恰好命中"\textbf{反而显著}；因此本文对 (d) 的表述口径是"显著性对人为家族边界敏感（$0.011$--$0.73$），不构成内禀证据"，而非单点"$p=0.13$ 不显著"；把基扩到 $(\pi, e)$ 后出现 $-1-2\pi+5\pi^2+3\pi^3-2e+e^2 = 137.036159$，比 $\Lambda$ 好 $1.9$ 倍——"最优"本身是家族规模的函数。Arb 认证区间另给出 $\Lambda \neq \alpha^{-1}$ 的严格判定。该吻合在性质与命运上与 Eddington 对 $\alpha^{-1} \approx 137$ 的纯理论猜测同类。\textbf{MDL/描述长度先验}（Rissanen 两段码，家族规模惩罚折进单一统计量）给出独立佐证：不计选择代价时 $\Delta L = -2.50$ 比特（落在 $O(1)$ 含糊区、无证据），计入穷举 $194\,480$ 个候选的选择代价后 $\Delta L = -20.07$ 比特（$\mathrm{BF}_{10} = 9.1\times10^{-7}$，强支持事后选择），且家族界 $B\ge6$ 起即便不计选择也无法先验压缩。
 
-  \item \textbf{GUT 对应（模型依赖的代数推论）}：$M^*c^2 = 8.909\times10^{16}$~GeV 与主流 GUT 模型能标（最小 SU(5) $\sim 10^{15}$、SO(10) $\sim 10^{16}$、SUSY SU(5) $\sim 2\times10^{16}$~GeV）仅同数量级而不吻合；"<1\%" 偏差是相对未指明模型出处的靶值 $\alpha M_P c^2$ 计算的，为 $\Lambda \approx \alpha^{-1}$ 的直接推论，不构成独立的物理预言。
+  \item \textbf{GUT 对应（经 RG 实算否证）}：$M^*c^2 = 8.909\times10^{16}$~GeV。用一圈 RG 方程实算 MSSM 规范耦合统一能标，$M_X$ 随 SUSY 阈值在 $[0.50,1.41]\times10^{16}$~GeV 间移动，$M^*c^2$ 比之高出 $6.3$--$17.9$ 倍；二圈结果 $M_X=(1.05\pm0.07)\times10^{16}$~GeV\cite{bourilkov2015} 仍高出约 $8.5$ 倍。原文所述“$<1\%$”偏差来自未指明模型出处的靶值，为 $\Lambda \approx \alpha^{-1}$ 的代数推论，不构成独立的物理预言。
 
   \item \textbf{核心公式（代数推论）}：$G \approx \alpha^2/M^{*2}$ 在自然单位制下自洽（$\alpha^2\Lambda^2 = 1.000004$），是 $\Lambda \approx \alpha^{-1}$ 的代数推论，而非独立的物理定律。
 \end{enumerate}
 
 \subsection*{局限性与未来工作}
 
-本文存在以下局限：(i)~Lean 形式化覆盖三类内容——代数恒等式（定理~1）、量纲格的单项式不变量分类（§4.7(四)）、Arb 证书回放（§4.8）；\textbf{未}形式化的是 $\mu_0$ 量纲重诠释的物理可接受性（属物理论证）与含超越函数的任意表达式类上的不变量分类；(ii)~本文未讨论原文中可能涉及的波动方程等其他断言；(iii)~$0.26\%$ 偏差的物理来源（若存在）尚未给出解释，本文只确证它是真实差异而非测量误差；(iv)~Arb 证书以整数端点形式进入 Lean，未导出完整依赖图，也未在 Lean 内重放 Arb 的运算步骤（只重放了单调比较）；(v)~GUT 模型能标（表~\ref{tab:gut}）取文献量级估计而非逐模型重整化群拟合值；(vi)~验证工件目前以本地目录交付，尚无版本化公开仓库与持久标识符（DOI）。
+本文存在以下局限：(i)~Lean 形式化覆盖三类内容——代数恒等式（定理~1）、量纲格的单项式不变量分类（§4.7(四)）、Arb 证书回放（§4.8）；\textbf{未}形式化的是 $\mu_0$ 量纲重诠释的物理可接受性（属物理论证）与含超越函数的任意表达式类上的不变量分类；(ii)~本文未讨论原文中可能涉及的波动方程等其他断言；(iii)~$0.26\%$ 偏差的物理来源（若存在）尚未给出解释，本文只确证它是真实差异而非测量误差；(iv)~Arb 证书以整数端点形式进入 Lean，未导出完整依赖图，也未在 Lean 内重放 Arb 的运算步骤（只重放了单调比较）；(v)~GUT 能标（表~\ref{tab:gut}）已由一圈 RG 实算取代文献量级估计，但未含二圈与 GUT 阈值匹配（后者使 $M_X$ 上移约数十个百分点\cite{bourilkov2015}）；(vi)~验证工件目前以本地目录交付，尚无版本化公开仓库与持久标识符（DOI）——本稿已备 \path|MANIFEST.sha256| 清单，DOI 待归档后补入；(vii)~本文全程使用实验室 $\alpha$ 及其 CODATA 不确定度；$\alpha$ 是否随宇宙时标演化（可能变化常数的系统综述见 \cite{uzan2011}）不影响对当前实验室值的判定，但外推到宇宙学尺度需不同输入，超出本文范围。
 
 未来工作：(a)~把 §4.7 的不变量分类从单项式推广到更宽的表达式类，需在 Lean 中形式化"量纲在函数复合下的不变性"；(b)~导出 Arb 的区间依赖图并在 Lean 内重放单调运算，使 §4.8 成为端到端机器检查证明（Lean 生态的认证浮点库 FloatLib 仍不成熟）；(c)~以 MDL（Minimum Description Length，最小描述长度）或通用编码先验替代"指定家族 + 随机靶"的显著性框架，使复杂度惩罚不依赖人为的家族边界（§4.4 的家族稳健性实验已显示结论对此不敏感）；(d)~对 §4.4 指出的"置换检验在事后挑选型问题上退化"作一般化刻画，明确何种零模型适用于何种构造类；(e)~将本文的"全族穷举 $\to$ 显式零模型 $\to$ 家族稳健性"流程应用于其他常数数值巧合（如质子-电子质量比、毕达哥拉斯逗号类构造）。
 
@@ -656,6 +710,23 @@ J.-P. Uzan.
 Living Reviews in Relativity \textbf{14}: 2 (2011).
 \url{https://doi.org/10.12942/lrr-2011-2}
 
+\bibitem{jackson1999}
+J.~D.~Jackson.
+\textit{Classical Electrodynamics}, 3rd ed.
+Wiley, New York (1999), Appendix on Units and Dimensions.
+
+
+\bibitem{bourilkov2015}
+D. Bourilkov.
+\textit{Strong Coupling Running, Gauge Coupling Unification and the Scale of New Physics}.
+JHEP \textbf{11} (2015): 117.
+\url{https://doi.org/10.1007/JHEP11(2015)117}（arXiv:1508.04176）
+
+\bibitem{amaldi1991}
+U. Amaldi, W. de Boer, H. F\"urstenau.
+\textit{Comparison of Grand Unified Theories with Electroweak and Strong Coupling Constants Measured at LEP}.
+Physics Letters B \textbf{260}(3--4) (1991): 447--455.
+\url{https://doi.org/10.1016/0370-2693(91)91641-8}
 \end{thebibliography}
 
 %==============================================================================
@@ -769,7 +840,29 @@ a2mu0 = alpha**2 * mu0
 # 注意: mpi 为误差传播包络, 非逐舍入认证 (区别于 Arb/MPFR)
 \end{lstlisting}
 
-\noindent\textbf{可复现性说明}：环境为 Python 3.13.7 + mpmath 1.3.0 + numpy 2.4.3 + python-flint 0.9.0（Arb 2.x），Lean 4.33.1；随机实验固定种子。全部工件已公开发布（见 §3 可得性段的仓库地址与许可）。
+\begin{lstlisting}[language=Python,caption={各版 CODATA 输入球的历史回溯证书（q6 / §4.8 稳健性表）}]
+# q6_codata_history.py (节选; 完整见 src/)
+from flint import arb
+H, E, C = arb("6.62607015e-34"), arb("1.602176634e-19"), arb("299792458")
+# 旧 SI (2010/2014): mu_0 是定义值 4*pi*1e-7, 零不确定度
+#                    -> alpha^2*mu_0 = alpha^2 * 4*pi*1e-7
+# 新 SI (2018/2022): mu_0 = 2*alpha*h/(e^2 c) 与 alpha 完全相关
+#                    -> alpha^2*mu_0 = 2*alpha^3*h/(e^2 c)
+EDITIONS = {
+ "2010": (arb("7.2973525698e-3","2.4e-12"), None, arb("6.67384e-11","8.0e-15")),
+ "2014": (arb("7.2973525664e-3","1.7e-12"), None, arb("6.67408e-11","3.1e-15")),
+ "2018": (arb("7.2973525693e-3","1.1e-12"), arb("1.25663706212e-6","1.9e-16"),
+                                             arb("6.67430e-11","1.5e-15")),
+ "2022": (arb("7.2973525643e-3","1.1e-12"), arb("1.25663706127e-6","2.0e-16"),
+                                             arb("6.67430e-11","1.5e-15")),
+}
+# 四版全部 disjoint = True; 间距 1.71~1.74e-13 几乎不动(由 0.26% 中心偏移主导),
+# 而 u(G) 缩 5.3 倍 => sigma 单调上升 21 -> 56 -> 115。
+# 反向求解: G 中心须上移 2616 ppm (116 倍当前 u(G)) 才重合;
+# 即使 u_r(G) 退回 1998 峰值 1500 ppm, 认证口径下仍不相交(间距 0.74 u(G))。
+\end{lstlisting}
+
+\noindent\textbf{可复现性说明}：环境为 Python 3.13.7 + mpmath 1.3.0 + numpy 2.4.3 + python-flint 0.9.0（Arb 2.x），Lean 4.33.1；随机实验固定种子。各脚本与结果 JSON 的 SHA-256 汇总于仓库根 \path|MANIFEST.sha256|（\path|src/make_manifest.py| 生成并支持 \texttt{--verify} 自校验），用 \texttt{sha256sum -c MANIFEST.sha256} 可确认复跑结果与本文所引逐位一致。全部工件已公开发布（见 §3 可得性段的仓库地址与许可）。
 
 \section{2019 SI 下 $\mu_0$ 与 $\varepsilon_0$ 的导出关系与不确定度传递}
 
@@ -826,10 +919,53 @@ a2mu0 = alpha**2 * mu0
 \texttt{dimG\_ne\_dim\_mu0} & 定理~3 & $[G]\neq[\mu_0]=[\alpha^2\mu_0]$：SI 量纲矛盾可判定 \\
 \texttt{cert\_gap\_pos} & §4.8 & Arb 证书间距 $>0$（整数标度 $10^{-22}$） \\
 \texttt{alpha2mu0\_gt\_G\_of\_cert} & §4.8 & 证书回放：$x\ge$ 下界 $\wedge$ $y\le$ 上界 $\Rightarrow x>y$ \\
+\texttt{gauss\_alpha\_dimensionless} & 附录~E & Gaussian 基下 $\alpha=e^2/(\hbar c)$ 无量纲（机器验证） \\
+\texttt{gauss\_mu0\_dimensionless} & 附录~E & Gaussian 基下 $\mu_0=1$ 无量纲（\texttt{rfl}，无公理） \\
+\texttt{gauss\_dimG\_ne\_dim\_alpha2mu0} & 附录~E & Gaussian 基下 $[G]\neq[\alpha^2\mu_0]=0$：量纲不匹配仍成立 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent 形式化的\textbf{边界}须同时声明：上述结果是\textbf{单项式}（幂积）层面的不变量分类。把它推广到含超越函数的任意表达式，需要"量纲不变性对函数复合保持"这类额外假设，本文不作此推广，也不声称已机械化"任何形式的可能关系都不存在"。
+
+%==============================================================================
+\section{单位约定：Gaussian（非有理化 CGS）与 Heaviside--Lorentz 的归一化}
+%==============================================================================
+
+\S4.7 表~\ref{tab:units} 把 SI、Gaussian CGS 与 HL 自然单位制并列，其中 $\mu_0$ 与 $\varepsilon_0$ 在 Gaussian 与 HL 两列都记为 $1$。本附录补上这条"被吸收"的来历（标准文献见 Jackson\cite{jackson1999}），并说明：\textbf{\S4.7 的量纲不匹配结论不依赖 SI 的四维基，在 Gaussian/HL 下逐字成立}。
+
+\textbf{一、为什么 Gaussian 里 $\mu_0$ 与 $\varepsilon_0$ 消失}。关键在于\textbf{电荷单位由库仑定律定义}。SI 中真空库仑定律为 $F = q_1q_2/(4\pi\varepsilon_0 r^2)$；把常数 $(4\pi\varepsilon_0)^{-1}$ 连同 $4\pi$ 一起并进电荷单位的定义，即令 $q_{\mathrm{G}}^2 \equiv q_{\mathrm{SI}}^2/(4\pi\varepsilon_0)$，定律就变成无系数的 $F = q_{\mathrm{G}}^2/r^2$。此时 $\varepsilon_0$ 已\textbf{没有独立的量纲位置}（它被并进 $q_{\mathrm{G}}$ 的量纲），记作 $\varepsilon_0^{\mathrm{G}} = 1$；再由 SI 的定义式 $\varepsilon_0\mu_0c^2 = 1$ 得 $\mu_0^{\mathrm{G}} = 1$。两者都是\textbf{纯数 1、无量纲}——不是因为"恰好取值为 $1$"，而是因为在这套约定里它们\textbf{不再是独立的量纲载体}。
+
+\textbf{二、电荷由此成为导出量纲}。把电荷当独立量纲消去后，Gaussian 的基本量纲只剩 $(\mathsf{M},\mathsf{L},\mathsf{T})$ 三个，电荷量纲必须由 $F = q^2/r^2$ 反解：
+\[
+  [q_{\mathrm{G}}] \;=\; \bigl([F][\text{长度}]^2\bigr)^{1/2}
+  \;=\; \bigl(\mathsf{M\,L\,T^{-2}}\cdot\mathsf{L^2}\bigr)^{1/2}
+  \;=\; \mathsf{M^{1/2}L^{3/2}T^{-1}} .
+\]
+这正是表~\ref{tab:units} 中 $e$ 行 Gaussian 列的 $4.803\times10^{-10}$~statC（esu）所载的量纲：statC 被定义为"两个等量点电荷相距 $1$~cm 时作用力为 $1$~dyn 的那份电量"。
+
+\textbf{三、$\alpha$ 在 Gaussian 中的写法变化、数值不变}。SI 中 $\alpha = e_{\mathrm{SI}}^2/(4\pi\varepsilon_0\hbar c)$，代入 $e_{\mathrm{G}}^2 = e_{\mathrm{SI}}^2/(4\pi\varepsilon_0)$ 立即得
+\[
+  \alpha \;=\; \frac{e_{\mathrm{G}}^2}{\hbar c},
+\]
+即 Gaussian 中 $\alpha$ 的表达式\textbf{不含 $4\pi\varepsilon_0$}，但\textbf{数值完全相同}（$1/137.035999\ldots$）——它本是无量纲纯数，换约定只能改它的\textbf{写法}，改不了它的\textbf{值}。
+
+\textbf{四、HL（Heaviside--Lorentz，有理化 CGS）}。HL 在 Gaussian 基础上再把 $4\pi$ 从库仑定律里提出来（"有理化"，使 Maxwell 方程不再显含 $4\pi$），于是 $\alpha = e_{\mathrm{HL}}^2/(4\pi\hbar c)$。电荷单位的换算因子是纯数 $\sqrt{4\pi}$：
+\[
+  e_{\mathrm{HL}} \;=\; \frac{e_{\mathrm{G}}}{\sqrt{4\pi}},
+  \qquad
+  \alpha \;=\; \frac{e_{\mathrm{HL}}^2}{4\pi\hbar c} \;=\; \frac{e_{\mathrm{G}}^2}{\hbar c}\ \text{（同值）}.
+\]
+因 $\sqrt{4\pi}$ 是\textbf{纯数}，HL 与 Gaussian 的\textbf{量纲向量逐分量相同}（差别只在 $\mu_0$、$\varepsilon_0$ 是否被 $4\pi$ 归一这类纯数因子），故下小节的形式化对两者一并成立。表~\ref{tab:units} 里 HL 列 $\alpha^2\mu_0 = 5.325\times10^{-5}$ 即 $\alpha^2$（因 $\mu_0 = 1$），与 Gaussian 列同值。
+
+\textbf{五、结论在 Gaussian/HL 下逐字成立（已形式化）}。$\alpha^2\mu_0$ 在 Gaussian/HL 中都等于 $\alpha^2\cdot 1 = \alpha^2$，是\textbf{无量纲纯数} $5.3251\times10^{-5}$；而 $G = 6.6743\times10^{-8}$~cm$^3$g$^{-1}$s$^{-2}$ \textbf{有量纲}。故"$G \approx \alpha^2\mu_0$"在高斯制里是"有量纲量约等于无量纲纯数"——\textbf{比 SI 中更明显地不成句}。该判定已加入 \texttt{G\_dimension\_lattice.lean} 的独立量纲模型（以 $(\mathsf{M},\mathsf{L},\mathsf{T})$ 为基、把电荷与其余指数一律乘 2 化为整数）：
+\begin{itemize}
+  \item \texttt{gauss\_alpha\_dimensionless}：$\alpha = e^2/(\hbar c)$ 在高斯基下无量纲（机器验证，最实质的一条）；
+  \item \texttt{gauss\_mu0\_dimensionless}：$\mu_0^{\mathrm{G}} = 1$ 无量纲（与 SI 的 $[\mu_0] = \langle 1,1,-2,-2\rangle$ 成对照）；
+  \item \texttt{gauss\_dimG\_ne\_dim\_alpha2mu0}：$[G] \neq [\alpha^2\mu_0] = \langle0,0,0\rangle$，即高斯制下量纲不匹配依旧成立。
+\end{itemize}
+\noindent 三条均经 \texttt{\#print axioms} 核验无 \texttt{sorryAx}。于是 \S4.7 的"$G \approx \alpha^2\mu_0$ 是 SI 单位制产物"这一结论\textbf{不依赖 SI 的四维基选择}：把基换到 $(\mathsf{M},\mathsf{L},\mathsf{T})$、把 $\mu_0$ 归一为 $1$，量纲不匹配仍可判定为真。
+
+\textbf{六、仍需诚实说明的边界}。本附录的形式化与 \S4.7(四) 同一粒度，均在\textbf{单项式}层面；两套基（SI 四维、Gaussian/HL 三维）结论一致，但不构成对"任意含超越函数表达式"的推广。此外 $G$ 在一切约定中量纲都不变（$\mathsf{L^3M^{-1}T^{-2}}$），变的只是单位刻度（SI 的 $6.6743\times10^{-11}$~m$^3$kg$^{-1}$s$^{-2}$ 对 CGS 的 $6.6743\times10^{-8}$~cm$^3$g$^{-1}$s$^{-2}$）——这本身就是"$G$ 无法被无量纲化"的另一种呈现。
 
 \end{document}

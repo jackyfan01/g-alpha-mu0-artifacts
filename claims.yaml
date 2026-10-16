@@ -67,7 +67,7 @@ claims:
       role: supporting
       result: pass@2026-10-15
       artifact: results/q3_arb_results.json
-      notes: "Arb 认证区间 [8.9091,8.9093]×10¹⁶ GeV；模型能标为文献量级估计（表 2）"
+      notes: "Arb 认证区间 [8.9091,8.9093]×10¹⁶ GeV；'与 GUT 能标对应'一句的靶值模型依赖性已改为实算，见 C12（results/q8_gut_running.json），旧表 2 的文献量级估计已废止"
 
   - id: C6
     statement: "G≈α²/M*²（自然单位制）与 α²Λ²≈1 是同一命题的两种写法，偏差 4.4×10⁻⁶ 与定理 4 同源"
@@ -114,3 +114,36 @@ claims:
       result: pass@2026-10-15
       artifact: results/q3_arb_results.json
       notes: "Λ−α⁻¹=3.046×10⁻⁴±2.24×10⁻⁸（不含 0）；(三) 仅限 |p|,|q|≤3，全域属未解丢番图问题"
+
+  - id: C10
+    statement: "CODATA 2010/2014/2018/2022 各自公布的 alpha、mu0、G 输入球下，alpha^2*mu0 与 G 的 Arb 认证区间四版全部不相交；间距几乎不随版本变化（1.71-1.74e-13），故 sigma 水平随 G 精度提高单调上升（21 -> 56 -> 115）"
+    location: "§4.8"
+    covers: []
+    verification:
+      type: numeric_recompute
+      role: supporting
+      result: pass@2026-10-17
+      artifact: results/q6_codata_history.json
+      notes: "旧 SI(2010/2014) mu0 为定义值 4*pi*1e-7（零不确定度），alpha^2*mu0 不确定度仅来自 alpha；新 SI(2018/2022) 用完全相关 trace 2*alpha^3*h/(e^2 c)。反向求解：G 中心须上移 2616 ppm（116 倍当前 u(G)）才重合，或中心不动须把 u(G) 撑到 2616 ppm（=1.74 倍 1998 峰值 1500 ppm）；即使 u_r(G) 退回 1998 峰值，认证口径下仍不相交（间距 0.74 u(G)>0）。原始数值取自 NIST 归档 ASCII 表 physics.nist.gov/cuu/Constants/ArchiveASCII/allascii_YYYY.txt"
+
+  - id: C11
+    statement: "MDL/描述长度先验：Λ≈α^{-1} 的吻合在计入家族规模惩罚后不构成压缩证据（先验 ΔL=-2.50 bit 落在 O(1) 含糊区；含选择代价 ΔL=-20.07 bit、BF10=9.1e-7，强支持事后选择）；对家族界 B 扫描 B>=6 起即使不计选择也无法先验压缩"
+    location: "§4.4"
+    covers: []
+    verification:
+      type: numeric_recompute
+      role: supporting
+      result: pass@2026-10-17
+      artifact: results/q7_mdl_prior.json
+      notes: "两段码 L0=log2(1/eps)=25.53 bit (eps=u(alpha^{-1})=2.066e-8)；L_p=3*log2(21)=13.18 bit（最偏袒 H1 的 3 非零系数读法）；残差 log2(2*d_obs/eps)=14.85 bit；先验 ΔL=log2(1/(2*d_obs))-L_p=-2.50 bit (BF10=0.177)；含选择 L_p^eff=L_p+log2(194480)=30.75 -> ΔL=-20.07 bit (BF10=9.1e-7)；B_crit=5.40；盈亏平衡 d<5.40e-5（先验）/ d<2.78e-10（含选择），实测 d_obs=3.046e-4 分别大 5.6 倍 / 1.1e6 倍"
+
+  - id: C12
+    statement: "单圈 RGE（SM 域至 M_SUSY、MSSM 域以上）+ M_SUSY 阈值扫描：M_X ∈ [4.96, 14.10]×10¹⁵ GeV（阈值主导，张度 2.84 倍；输入测量不确定仅 0.95%），故 M*c²=8.909×10¹⁶ GeV 高于全区间 6.3-17.9 倍，'与 GUT 能标对应'在 1 圈口径下不成立"
+    location: "§4.5 定理 5、§5.5 讨论"
+    covers: ["定理 5", "env:theorem#5"]
+    verification:
+      type: numeric_recompute
+      role: supporting
+      result: pass@2026-10-17
+      artifact: results/q8_gut_running.json
+      notes: "M_Z 输入 PDG 口径：α_em^{-1}(M_Z)=127.952±0.009、sin²θ_W=0.23122±0.00004、α_s(M_Z)=0.1179±0.0009；规范化 α_1^{-1}=(3/5)cos²θ_W α_em^{-1}=59.020、α_2^{-1}=sin²θ_W α_em^{-1}=29.585、α_3^{-1}=8.4818；b_SM=(41/10,-19/6,-7)、b_MSSM=(33/5,1,-3)；M_SUSY 扫描 0.3/1/2.8/10 TeV -> M_X=1.4095/0.9850/0.7251/0.4964×10¹⁶ GeV，α_GUT^{-1}=25.17/26.03/26.76/27.67，a3-a1=-0.335/-0.595/-0.818/-1.093；M*c²/M_X=6.32-17.95（M*c² 落在扫描区间之外）。SM-only 非 SUSY 情形 α_1,α_2 交于 1.031×10¹³ GeV 但 α_3 在交点偏差 -5.58，不统一。诚实边界：仅 1 圈；M_X 非可观测量、结论只依赖量级与模型依赖性；2 圈对照 Bourilkov 2015（arXiv:1503.01756，M_SUSY≈2.8 TeV 处 M_GUT=1.05±0.07×10¹⁶）把 1 圈值抬高约 40%，仍使 M*c² ≈8.5 倍高于区间"

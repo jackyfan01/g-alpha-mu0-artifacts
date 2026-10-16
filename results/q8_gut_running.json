@@ -1,0 +1,138 @@
+{
+  "method": "1-loop gauge-coupling RGE; GUT-normalized a1=(3/5)aY, a2=aW, a3=as",
+  "inputs_at_MZ": {
+    "M_Z_GeV": 91.1876,
+    "alpha_em_inv": 127.952,
+    "alpha_em_inv_u": 0.009,
+    "sin2thetaW_MS": 0.23122,
+    "sin2thetaW_MS_u": 4e-05,
+    "alpha_s": 0.1179,
+    "alpha_s_u": 0.0009,
+    "alpha1_inv": 59.020163136,
+    "alpha2_inv": 29.58506144,
+    "alpha3_inv": 8.481764206955047
+  },
+  "beta_coefficients_1loop": {
+    "SM": [
+      4.1,
+      -3.1666666666666665,
+      -7.0
+    ],
+    "MSSM": [
+      6.6,
+      1.0,
+      -3.0
+    ]
+  },
+  "scenario_A_MSSM": {
+    "definition": "SM below M_SUSY, MSSM above; solve alpha1(M_X)=alpha2(M_X)",
+    "M_SUSY_threshold_sweep": [
+      {
+        "M_SUSY_TeV": 0.3,
+        "M_X_GeV": 1.4095078944120986e+16,
+        "alpha1_inv_at_MX": 25.174917480027503,
+        "alpha2_inv_at_MX": 25.174917480027503,
+        "alpha3_inv_at_MX": 24.83947113017419,
+        "unification_quality_a3_minus_a1": -0.3354463498533142,
+        "ratio_MstarC2_over_MX": 6.320645691534716
+      },
+      {
+        "M_SUSY_TeV": 0.5,
+        "M_X_GeV": 1.2107127027795846e+16,
+        "alpha1_inv_at_MX": 25.53786579735053,
+        "alpha2_inv_at_MX": 25.53786579735053,
+        "alpha3_inv_at_MX": 25.092083159031016,
+        "unification_quality_a3_minus_a1": -0.4457826383195146,
+        "ratio_MstarC2_over_MX": 7.3584756974520005
+      },
+      {
+        "M_SUSY_TeV": 1.0,
+        "M_X_GeV": 9850285957960476.0,
+        "alpha1_inv_at_MX": 26.030355976262697,
+        "alpha2_inv_at_MX": 26.030355976262697,
+        "alpha3_inv_at_MX": 25.434856323553884,
+        "unification_quality_a3_minus_a1": -0.5954996527088139,
+        "ratio_MstarC2_over_MX": 9.04440748017089
+      },
+      {
+        "M_SUSY_TeV": 2.0,
+        "M_X_GeV": 8014133595099293.0,
+        "alpha1_inv_at_MX": 26.522846155174868,
+        "alpha2_inv_at_MX": 26.522846155174868,
+        "alpha3_inv_at_MX": 25.777629488076755,
+        "unification_quality_a3_minus_a1": -0.7452166670981132,
+        "ratio_MstarC2_over_MX": 11.116610291408076
+      },
+      {
+        "M_SUSY_TeV": 2.8,
+        "M_X_GeV": 7250468849528234.0,
+        "alpha1_inv_at_MX": 26.761914100136707,
+        "alpha2_inv_at_MX": 26.761914100136707,
+        "alpha3_inv_at_MX": 25.944020777770195,
+        "unification_quality_a3_minus_a1": -0.8178933223665121,
+        "ratio_MstarC2_over_MX": 12.287481244167655
+      },
+      {
+        "M_SUSY_TeV": 5.0,
+        "M_X_GeV": 6101295388025142.0,
+        "alpha1_inv_at_MX": 27.17388275913497,
+        "alpha2_inv_at_MX": 27.17388275913497,
+        "alpha3_inv_at_MX": 26.230750964432985,
+        "unification_quality_a3_minus_a1": -0.9431317947019834,
+        "ratio_MstarC2_over_MX": 14.601817209973916
+      },
+      {
+        "M_SUSY_TeV": 10.0,
+        "M_X_GeV": 4963977345579602.0,
+        "alpha1_inv_at_MX": 27.666372938047136,
+        "alpha2_inv_at_MX": 27.666372938047136,
+        "alpha3_inv_at_MX": 26.573524128955853,
+        "unification_quality_a3_minus_a1": -1.0928488090912827,
+        "ratio_MstarC2_over_MX": 17.947301890757867
+      }
+    ],
+    "M_X_range_GeV": [
+      4963977345579602.0,
+      1.4095078944120986e+16
+    ],
+    "M_X_nominal_GeV": 9850285957960476.0,
+    "couplings_at_MX_nominal": {
+      "alpha1_inv": 26.030355976262697,
+      "alpha2_inv": 26.030355976262697,
+      "alpha3_inv": 25.434856323553884
+    },
+    "input_uncertainty_on_MX_rel": 0.009477074920237685,
+    "threshold_spread_factor_MX_HI_over_LO": 2.839472858729419
+  },
+  "scenario_B_minimal_SU5": {
+    "definition": "SM running throughout; solve alpha1=alpha2 for crossing",
+    "crossing_scale_GeV": 10310981847430.148,
+    "couplings_at_crossing": {
+      "alpha1_inv": 42.41228465614679,
+      "alpha2_inv": 42.41228465614679,
+      "alpha3_inv": 36.83667868475321
+    },
+    "alpha3_defect_at_crossing": -5.5756059713935775,
+    "unifies": false
+  },
+  "comparison_to_Mstar": {
+    "Mstar_c2_GeV": 8.909e+16,
+    "MstarC2_over_MX_nominal": 9.04440748017089,
+    "MstarC2_over_MX_range": [
+      6.320645691534716,
+      17.947301890757867
+    ],
+    "Mstar_inside_MX_range": false
+  },
+  "honest_scope": {
+    "loop_order": "1-loop only; 2-loop + GUT-threshold matching raise M_X by ~tens of percent (see two_loop_crosscheck)",
+    "two_loop_crosscheck": {
+      "source": "Bourilkov, JHEP 11 (2015) 117 (arXiv:1508.04176)",
+      "M_GUT_GeV": "1.05e16 +/- 0.07e16",
+      "M_SUSY_GeV": "2820 +650/-530",
+      "note": "1-loop here at M_SUSY=2.8 TeV gives ~7.5e15; 2-loop rises it by ~40%. Even so M*c^2/M_GUT ~ 8.5."
+    },
+    "dominant_uncertainty": "SUSY threshold M_SUSY (factor ~2.8) >> input measurement error (~0.9%)"
+  },
+  "verdict": "M*c^2 = 8.909e16 GeV lies ABOVE the entire computed MSSM unification range [4.96e+15, 1.41e+16] GeV (factor 6.3-17.9); the 'GUT-scale correspondence' does not survive RG running + thresholds. Dominant spread is the unknown SUSY threshold, not measurement error: M_X is not an observable."
+}

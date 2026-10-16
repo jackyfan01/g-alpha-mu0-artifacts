@@ -1,7 +1,7 @@
 # 证明覆盖面声明（proof scope）
 
-配套论文：`G_alpha_squared_mu_zero_paper.tex`（29 页）
-声称登记表：`claims.yaml`（C1–C9）
+配套论文：`G_alpha_squared_mu_zero_paper.tex`（34 页）
+声称登记表：`claims.yaml`（C1–C12）
 形式化工件：`src/G_alpha_squared_mu_zero.lean`、`src/G_dimension_lattice.lean`
 数值工件：`results/*.json`
 
@@ -19,6 +19,9 @@
 | C2,C4,C5,C6,C8,C9 | 各数值断言 | Lean `Float` + Python mpmath(dps=30/50) + Arb 球算术 | **数值/区间验证**，不是证明 |
 | C8(补充) | 完全相关口径的第二枚 Arb 证书（μ₀ 由 α 在同一 trace 内导出） | Arb（`q5_correlated_and_spacing.py`）+ `results/q5_correlated_and_spacing.json` | 数值/区间验证；与独立球口径结论一致（宽度差 1.86%，源于 CODATA 对 u(μ₀) 的向上舍入展示） |
 | C8(压力) | α 端球口径的三档压力测试（u(α)=1.10/1.132/1.168e-12） | Arb（`q5b_alpha_ball_nist_caliber.py`）+ `results/q5b_alpha_ball_nist_caliber.json` | 三档均判不相交，间距均 115.42 u(G) |
+| C10(历史) | 各版 CODATA（2010/2014/2018/2022）输入球下的 α²μ₀ vs G 证书 | Arb（`q6_codata_history.py`）+ `results/q6_codata_history.json` | 四版全部不相交；间距 1.71–1.74e-13 几乎不动，σ 随 G 精度升（21→56→115）；反向阈值：G 中心须移 2616 ppm（=1.74×1998 峰值）才重合 |
+| C11(MDL) | Λ≈α⁻¹ 的 MDL/描述长度先验（家族规模惩罚折进单一统计量） | `q7_mdl_prior.py` + `results/q7_mdl_prior.json` | 两段码：先验 ΔL=−2.50 bit（BF10=0.177，落在 O(1) 含糊区）；含选择 ΔL=−20.07 bit（BF10=9.1e-7，强支持事后选择）；B≥6 起即使不计选择也无法先验压缩 |
+| C12(GUT-RG) | 单圈 RGE + M_SUSY 阈值扫描：M_X 区间 vs M*c² | `q8_gut_running.py` + `results/q8_gut_running.json` | 数值验证（**仅 1 圈**）；M_X ∈ [4.96,14.10]×10¹⁵ GeV，阈值主导（张度 2.84 倍）远大于测量（0.95%）；M*c²=8.909×10¹⁶ GeV 高出全区间 6.3–17.9 倍，故"与 GUT 能标对应"不成立 |
 | C4(补充) | 同一均匀靶零模型的解析精确 p（覆盖测度 = 最近邻被估量的闭式） | 区间合并逐段求长（无 MC，dps=60 复核） | 数值验证；与 MC 在小数点后三位一致（差 0.17 倍标准误） |
 
 Lean 全部定理经 `#print axioms` 逐条核验（2026-10-16 实测，`src/G_dimension_lattice.lean` 末尾打印九条）：`thm1_monoid` **不依赖任何公理**；`dimMono_eq_zero_iff`、`dimMono_param`、`Pi1_dimensionless`、`alpha_dimensionless`、`no_dimensionless_G` 依赖 `[propext, Classical.choice, Quot.sound]`；`dimG_ne_dim_mu0`、`cert_gap_pos`、`alpha2mu0_gt_G_of_cert` 依赖 `[propext, Quot.sound]`。九条均**无 `sorryAx`**。
@@ -31,6 +34,7 @@ Lean 全部定理经 `#print axioms` 逐条核验（2026-10-16 实测，`src/G_d
 4. **CODATA 调整本身**：本文认证的是"给定 CODATA 输入下的推导"，未重新证明 CODATA 的数据合并过程。
 5. **定理 4 的家族边界**：穷举与零模型的结论依赖人为指定的家族（整数系数、π 的 ≤3 次、|aᵢ|≤10）与均匀随机靶；未给出与家族无关的先验框架。
 6. **原文其余断言**（波动方程等）：本文未审。
+7. **C12 的 RGE 阶数与阈值模型**：只跑单圈 β 函数，未含 2 圈修正；SUSY 阈值以单一 M_SUSY 台阶近似，未含逐粒子阈值的 Yukawa/规范贡献。结论只依赖"量级 + 模型依赖性"（M*c² 高于整个 1 圈区间一个量级以上），故对 2 圈修正稳健；但 M_X 的具体数值不应被当作可观测量引用。
 
 ## 边界条件与隐式常数
 

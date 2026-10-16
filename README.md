@@ -23,6 +23,9 @@ python q3_arb_certified.py        # Arb 定向舍入认证区间（不相交 / L
 python R4_interval_arithmetic.py  # mpmath 区间交叉核对
 python q5_correlated_and_spacing.py  # 完全相关口径的第二证书 + 同一零模型的解析精确 p
 python q5b_alpha_ball_nist_caliber.py # alpha 端球口径的三档压力测试
+python q6_codata_history.py       # 各版 CODATA 输入球下的认证区间间隙轨迹（§4.8 表 4）
+python q7_mdl_prior.py            # MDL/描述长度先验：家族规模惩罚折进单一统计量（§4.4）
+python q8_gut_running.py          # 单圈 RGE + M_SUSY 阈值扫描：M_X 区间 vs M*c²（§4.5/§5.5）
 
 # 3) Lean 4 验证（无需 mathlib）
 lean src/G_alpha_squared_mu_zero.lean    # 打印 6 项判定，全部 PASS
@@ -71,6 +74,10 @@ src/
   q3_arb_certified.py            Arb 认证区间（§4.8 严格判定）
   q5_correlated_and_spacing.py   完全相关口径的第二证书 + 解析精确 p（覆盖测度闭式）
   q5b_alpha_ball_nist_caliber.py alpha 端球口径的三档压力测试
+  q6_codata_history.py           CODATA 2010/2014/2018/2022 各自输入球下的区间回溯（§4.8 稳健性表）
+  q7_mdl_prior.py                MDL/描述长度先验：家族规模惩罚折进单一统计量（§4.4）
+  q8_gut_running.py              单圈 RGE（SM→MSSM）+ M_SUSY 阈值扫描：M_X 区间与输入不确定度（§4.5/§5.5）
+  make_manifest.py               生成/校验 MANIFEST.sha256（脚本与结果 JSON 的 SHA-256）
   R4_interval_arithmetic.py      mpmath 区间交叉核对
 results/
   lambda_enumeration.json        穷举结果：排名、次优、各阈值计数
@@ -79,8 +86,14 @@ results/
   q3_arb_results.json            Arb 区间、不相交判定、sigma 水平
   q5_correlated_and_spacing.json 两版证书（独立球 / 完全相关）+ 五个家族的 p_exact
   q5b_alpha_ball_nist_caliber.json 三档 alpha 端球压力测试（4.52/4.66/4.80e-10，均不相交）
+  q6_codata_history.json         四版 CODATA 证书 + G 中心/不确定度阈值 + 历史位移
+  q7_mdl_prior.json             MDL 两段码：L0/L_p/残差/ΔL/BF10/家族界扫描/盈亏平衡
+  q8_gut_running.json           单圈 RGE：M_Z 输入、b 系数、M_SUSY 扫描的 M_X/α_GUT、输入不确定度、2 圈对照
   mpi_crosscheck.json            mpmath 区间交叉核对结果
+MANIFEST.sha256                  src/*.py 与 results/*.json 的 SHA-256（由 make_manifest.py 生成）
 ```
+
+逐位复现核对：`sha256sum -c MANIFEST.sha256`（在任何一次重跑改写结果后须先 `python src/make_manifest.py` 重新生成清单）。
 
 Lean 侧自检：`lean src/G_dimension_lattice.lean` 打印
 

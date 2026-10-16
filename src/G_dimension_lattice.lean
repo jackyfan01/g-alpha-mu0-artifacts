@@ -130,6 +130,59 @@ theorem dimG_ne_dim_mu0 : dG ≠ dMu0 := by
   omega
 
 -- ============================================================================
+-- 第 2.5 部分：Gaussian（非有理化 CGS）约定下的同一判定
+-- ============================================================================
+-- 复审要求核对：§4.7 表 3 里 Gaussian（非有理化 CGS）与 HL 两列的"μ₀ 被吸收为 1"
+-- 是否有形式依据。此处给出一个独立的、以 (M, L, T) 为基的量纲模型。
+--
+-- 高斯制中电荷是导出量：[e] = M^{1/2} L^{3/2} T^{-1}（半整数指数）。
+-- 为避免分数指数，把三个指数一律 ×2（保序、保线性、保相等判定），得到整数值向量：
+--   [c]   = L T^{-1}            → ⟨ 0,  2, -2⟩
+--   [ℏ]   = M L² T^{-1}         → ⟨ 2,  4, -2⟩
+--   [e]   = M^{1/2} L^{3/2} T^{-1} → ⟨ 1,  3, -2⟩
+--   [G]   = L³ M^{-1} T^{-2}    → ⟨-2,  6, -4⟩
+--   [μ₀]  = 1（不存在独立 μ₀，被吸收进电荷定义） → ⟨ 0,  0,  0⟩
+-- 关键差别：这里**没有**电流量纲 I，S 除去了第四个基本量纲。
+
+structure GDim where
+  m : Int
+  l : Int
+  t : Int
+
+def GD.mul (x y : GDim) : GDim := ⟨x.m + y.m, x.l + y.l, x.t + y.t⟩
+def GD.pow (n : Int) (x : GDim) : GDim := ⟨n * x.m, n * x.l, n * x.t⟩
+
+def gG    : GDim := ⟨-2, 6, -4⟩
+def gMu0  : GDim := ⟨ 0, 0,  0⟩
+def gE    : GDim := ⟨ 1, 3, -2⟩
+def gHbar : GDim := ⟨ 2, 4, -2⟩
+def gC    : GDim := ⟨ 0, 2, -2⟩
+
+/-- 高斯制中 α = e²/(ℏc) 无量纲（机器验证）。
+    这是最实质的一条：它说明"把 μ₀ 吸收进电荷定义"后，α 仍是同一个纯数。 -/
+theorem gauss_alpha_dimensionless :
+    GD.mul (GD.pow 2 gE) (GD.pow (-1) (GD.mul gHbar gC)) = ⟨0, 0, 0⟩ := by
+  simp only [GD.mul, GD.pow, gE, gHbar, gC, GDim.mk.injEq]
+  omega
+
+/-- 高斯制中 μ₀ 无量纲（= 1，被吸收）——与 SI 的 [μ₀] = ⟨1,1,-2,-2⟩ 形成对照。 -/
+theorem gauss_mu0_dimensionless : gMu0 = (⟨0, 0, 0⟩ : GDim) := rfl
+
+/-- **高斯制下的同一结论**：α 无量纲，故 α²μ₀ 无量纲，而 G 有量纲 →
+    "G ≈ α²μ₀"在高斯制里同样是量纲不匹配。结论不依赖 SI 的四维基。 -/
+theorem gauss_dimG_ne_dim_alpha2mu0 :
+    gG ≠ GD.mul (GD.pow 2 (⟨0, 0, 0⟩ : GDim)) gMu0 := by
+  intro H
+  have h := congrArg GDim.m H
+  simp only [GD.mul, GD.pow, gG, gMu0] at h
+  omega
+
+-- HL（Heaviside–Lorentz，有理化 CGS）与 Gaussian 共享同一 (M, L, T) 基：
+--   二者的 [e] 只差一个纯数因子 √(4π)（4π 无量纲），故量纲向量完全相同，
+--   于是 gauss_alpha_dimensionless / gauss_dimG_ne_dim_alpha2mu0 在 HL 下逐字成立；
+--   差别只在 α 的**数值**定义 α = e²/(4πℏc)（HL）vs α = e²/(ℏc)（Gaussian）里那个 4π。
+
+-- ============================================================================
 -- Q7：Arb 证书回放
 -- ============================================================================
 -- §4.8 的区间不相交由 Arb 在 Lean 之外算出（见 results/q3_arb_results.json）。
@@ -172,6 +225,8 @@ theorem alpha2mu0_gt_G_of_cert (x y : Int)
 --   dimMono_eq_zero_iff / dimMono_param / Pi1_dimensionless / alpha_dimensionless
 --   no_dimensionless_G     → [propext, Classical.choice, Quot.sound]
 --   dimG_ne_dim_mu0 / cert_gap_pos / alpha2mu0_gt_G_of_cert → [propext, Quot.sound]
+--   gauss_alpha_dimensionless / gauss_dimG_ne_dim_alpha2mu0 → 同上两条基础公理
+--   gauss_mu0_dimensionless → 不依赖任何公理（rfl）
 #print axioms thm1_monoid
 #print axioms dimMono_eq_zero_iff
 #print axioms dimMono_param
@@ -179,6 +234,9 @@ theorem alpha2mu0_gt_G_of_cert (x y : Int)
 #print axioms alpha_dimensionless
 #print axioms no_dimensionless_G
 #print axioms dimG_ne_dim_mu0
+#print axioms gauss_alpha_dimensionless
+#print axioms gauss_mu0_dimensionless
+#print axioms gauss_dimG_ne_dim_alpha2mu0
 #print axioms cert_gap_pos
 #print axioms alpha2mu0_gt_G_of_cert
 
