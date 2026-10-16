@@ -47,7 +47,10 @@ for name, b in [("corr", a2mu0_corr), ("indep", a2mu0_indep)]:
                  "gap": gap, "gap_in_uG": gap / float(G.rad()),
                  "dev_percent": dev * 100.0, "sigma": abs(dev) * float(G.mid()) / float(G.rad())}
 OUT["mu0_from_alpha_vs_CODATA"] = {
-    "derived": str(mu0_from_alpha.mid())[:24],
+    # 注意：python-flint 对极窄球的 str() 会输出 "[lo ..." 形式，直接切片会得到残缺字符串，
+    # 因此这里落 float（16 位有效数字，已远超本文所需精度）并另存端点。
+    "derived": float(mu0_from_alpha.mid()),
+    "derived_interval": [float(mu0_from_alpha.lower()), float(mu0_from_alpha.upper())],
     "codata_displayed": "1.25663706127e-06",
     "rel_difference": float(abs(mu0_from_alpha.mid() - arb("1.25663706127e-6")) / mu0_from_alpha.mid())}
 
