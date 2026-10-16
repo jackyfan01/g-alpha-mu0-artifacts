@@ -1,0 +1,51 @@
+{
+  "N_family": 194480,
+  "value_range": [
+    -450.17473734978967,
+    450.17473734978967
+  ],
+  "alpha_inv": 137.03599917759013,
+  "Lambda": 137.03630377587842,
+  "d_obs": 0.0003045982882952103,
+  "A_global_random_target": {
+    "B": 400000,
+    "p_value": 0.12708,
+    "Dmin_median": 0.0015282468057851162,
+    "Dmin_mean": 0.00860097254496374,
+    "Dmin_p05": 0.00011632715298475205,
+    "Dmin_p95": 0.034925575343640956,
+    "empirical_percentile_of_d_obs": 12.708
+  },
+  "B_analytic": {
+    "p_single_candidate": 6.766223491091522e-07,
+    "p_binomial_1_minus_(1-p_single)^N": 0.12329924480434251,
+    "bonferroni_upper": 0.13158951445474792
+  },
+  "C_local_conditional": {
+    "window": 0.1,
+    "candidates_in_window": 68,
+    "p_value": 0.34000342264790784,
+    "note": "条件在'家族已在 alpha^{-1}+-0.1 内有候选'之上，是最保守的口径"
+  },
+  "D_coefficient_permutation_DEGENERATE": {
+    "B": 200,
+    "family_size": 194480,
+    "median_best_fit": 0.0003045982882952103,
+    "p_at_observed": 0.585,
+    "theoretical_1_minus_e^-1": 0.6321205588285577,
+    "all_geq_d_obs": true,
+    "conclusion": "系数重抽的 p 值等于'恰好抽中 Λ'的概率(≈1-e^-1)，与拟合优劣无关，故本问题的合法零模型是 A/E 的随机靶口径，不是 D。"
+  },
+  "E_window_100_200": {
+    "B": 400000,
+    "p_value": 0.17311,
+    "Dmin_median": 0.0010932243872900926
+  },
+  "verdict": {
+    "p_global": 0.12708,
+    "p_window_100_200": 0.17311,
+    "p_local_conditional": 0.34000342264790784,
+    "significant_at_5pct": false,
+    "statement": "Lambda 为全族最优，但在 H0（靶值与家族无关）下出现同量级最优拟合的概率并不小 => 吻合不具统计显著性，属事后选择。"
+  }
+}

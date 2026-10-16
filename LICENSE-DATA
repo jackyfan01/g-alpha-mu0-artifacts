@@ -1,0 +1,7 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+本仓库中的**非代码资产**（论文文本 `paper/`、机器可读结果 `results/*.json`、
+证明工件 `claims.yaml` / `proof_scope.md` / `proof_trace.md` / `revision_history.md`）
+采用 CC BY 4.0 授权；**代码**（`src/`、`lakefile.lean`）采用 MIT（见 LICENSE-CODE）。
+
+完整条款：https://creativecommons.org/licenses/by/4.0/legalcode

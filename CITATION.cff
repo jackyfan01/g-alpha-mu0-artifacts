@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you reuse the artifacts of this study, please cite the software repository as follows."
+title: "Artifacts for the Lean 4 assisted audit of the claim G = alpha^2 mu_0"
+authors:
+  - name: "jackyfan01"
+    type: person
+date-released: "2026-10-16"
+repository-code: "https://github.com/jackyfan01/g-alpha-mu0-artifacts"
+license:
+  - MIT
+  - CC-BY-4.0
+keywords:
+  - Lean 4
+  - certified interval arithmetic
+  - Arb
+  - CODATA 2022
+  - dimensional analysis
+  - fine-structure constant
+  - Newtonian gravitational constant
+version: "1.0.0"

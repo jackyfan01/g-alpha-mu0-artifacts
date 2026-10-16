@@ -1,0 +1,56 @@
+{
+  "alpha_inv": 137.03599917759013,
+  "Lambda": 137.03630377587842,
+  "d_Lambda": 0.0003045982882952103,
+  "null_window": [
+    100.0,
+    200.0
+  ],
+  "B": 200000,
+  "families": {
+    "F0_poly3_int_le10": {
+      "size": 194480,
+      "best_fit_value": 137.03630377587842,
+      "best_distance": 0.0003045982882952103,
+      "beats_Lambda": false,
+      "ratio_to_Lambda": 1.0,
+      "p_value_random_target_100_200": 0.17511
+    },
+    "F1_rational_pi": {
+      "size": 59049,
+      "best_fit_value": 100.95003128574506,
+      "best_distance": 36.08596789184507,
+      "beats_Lambda": false,
+      "ratio_to_Lambda": 118470.68509088701,
+      "p_value_random_target_100_200": 0.370975
+    },
+    "F2_mixed_pi_e": {
+      "size": 1771560,
+      "best_fit_value": 137.03615918117922,
+      "best_distance": 0.00016000358908740964,
+      "beats_Lambda": true,
+      "ratio_to_Lambda": 0.525293789347685,
+      "p_value_random_target_100_200": 0.729045
+    },
+    "F3_pi_half_powers": {
+      "size": 9260,
+      "best_fit_value": 137.02225629020575,
+      "best_distance": 0.013742887384381675,
+      "beats_Lambda": false,
+      "ratio_to_Lambda": 45.11807161260984,
+      "p_value_random_target_100_200": 0.35533
+    }
+  },
+  "verdict": {
+    "families_where_Lambda_is_not_optimal": [
+      "F2_mixed_pi_e"
+    ],
+    "all_p_values": {
+      "F0_poly3_int_le10": 0.17511,
+      "F1_rational_pi": 0.370975,
+      "F2_mixed_pi_e": 0.729045,
+      "F3_pi_half_powers": 0.35533
+    },
+    "statement": "结论对家族定义稳健：无论把搜索类扩到 pi 的有理函数、混合基 (pi,e) 还是 pi 的半整数幂，'最佳拟合' 的偶然概率 p 均远大于 0.05，Lambda 型构造的吻合始终不构成统计证据。"
+  }
+}

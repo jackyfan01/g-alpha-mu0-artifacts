@@ -1,0 +1,116 @@
+# 机器可读声称登记表（仿 openai/math formalization.yaml 的字段口径）
+# 与论文 G_alpha_squared_mu_zero_paper.tex 逐条对应；由 Stage 4.8 门控校验。
+# 约定：verification.result = pass@YYYY-MM-DD（本次核验日期）；artifact 路径相对本文件所在目录。
+
+version: 1
+paper: G_alpha_squared_mu_zero_paper.tex
+toolchain:
+  lean: "4.33.1 (elan channel lean-4.33.1, core only, 不依赖 Mathlib)"
+  python: "3.13 + mpmath 1.3 + numpy + python-flint 0.9.0 (Arb 2.x)"
+  codata: "CODATA 2022"
+
+claims:
+  - id: C1
+    statement: "α²/(c²ε₀) = α²μ₀ 是代数恒等式（由 c²ε₀μ₀=1 直接推出），不涉及物理内容"
+    location: "§4.1 定理 1"
+    covers: ["定理 1", "env:theorem#1"]
+    verification:
+      type: lean4
+      declaration: "thm1_monoid"
+      role: main
+      result: pass@2026-10-15
+      statement_check: "approved@2026-10-15 by 作者复核（Lean 陈述与正文逐字一致）"
+      artifact: G_alpha_mu0_repo/src/G_dimension_lattice.lean
+      notes: "#print axioms thm1_monoid → does not depend on any axioms"
+
+  - id: C2
+    statement: "SI 中 G 与 α²μ₀ 的相对偏差为 0.2616%（CODATA 2022），单位制依赖"
+    location: "§4.2 定理 2"
+    covers: ["定理 2", "env:theorem#2"]
+    verification:
+      type: mpmath_recompute
+      role: main
+      result: pass@2026-10-15
+      artifact: G_alpha_mu0_repo/src/verify_numerical.py
+      notes: "Lean Float 与 mpmath(dps=50) 双通道；阈值 0.27% 仅为通过性判据，不承载证据强度"
+
+  - id: C3
+    statement: "标准 HL 自然单位制下 [G]=[M]⁻² 而 [α²μ₀]=1，量纲矛盾不因换单位制消失"
+    location: "§4.3 定理 3"
+    covers: ["定理 3", "env:theorem#3"]
+    verification:
+      type: lean4
+      declaration: "dimG_ne_dim_mu0"
+      role: supporting
+      result: pass@2026-10-15
+      statement_check: "approved@2026-10-15 by 作者复核"
+      artifact: G_alpha_mu0_repo/src/G_dimension_lattice.lean
+      notes: "量纲向量化为 SI 四基本量纲整数指数；解析推导另见 §4.3"
+
+  - id: C4
+    statement: "Λ=4π³+π²+π=137.03630 为 194480 个低复杂度 π 多项式的全局最优，但显式零模型下 p≈0.13，统计不显著"
+    location: "§4.4 定理 4"
+    covers: ["定理 4", "env:theorem#4"]
+    verification:
+      type: numeric_recompute
+      role: main
+      result: pass@2026-10-15
+      artifact: G_alpha_mu0_repo/results/lambda_enumeration.json
+      notes: "零模型口径见 results/q2_lambda_null_results.json（种子 20261014，可逐位重跑）；2026-10-16 追加缩族敏感性：|a_i|<=5 时 p=0.0198、|a_i|<=4 时 p=0.0111（Bonferroni 口径），即 p 随家族边界双向漂移 0.011-0.73，非内禀量；同日追加间距感知解析精确 p（无 MC，区间合并逐段求长）：0.0111/0.0198/0.0322/0.0698/0.1270，主口径与 MC 0.12708 四位一致，跨 K=5 口径 Bonferroni 后 0.055，见 results/q5_correlated_and_spacing.json"
+
+  - id: C5
+    statement: "M*c²=8.909×10¹⁶ GeV；与 GUT 能标'对应'依赖未指明模型的靶值，为 Λ≈α⁻¹ 的代数推论"
+    location: "§4.5 定理 5"
+    covers: ["定理 5", "env:theorem#5"]
+    verification:
+      type: numeric_recompute
+      role: supporting
+      result: pass@2026-10-15
+      artifact: G_alpha_mu0_repo/results/q3_arb_results.json
+      notes: "Arb 认证区间 [8.9091,8.9093]×10¹⁶ GeV；模型能标为文献量级估计（表 2）"
+
+  - id: C6
+    statement: "G≈α²/M*²（自然单位制）与 α²Λ²≈1 是同一命题的两种写法，偏差 4.4×10⁻⁶ 与定理 4 同源"
+    location: "§4.6 定理 6"
+    covers: ["定理 6", "env:theorem#6"]
+    verification:
+      type: numeric_recompute
+      role: supporting
+      result: pass@2026-10-15
+      artifact: G_alpha_mu0_repo/results/q3_arb_results.json
+      notes: "α²Λ²=1.000004446±7.8×10⁻¹⁰，认证不含 1"
+
+  - id: C7
+    statement: "不引入质量标度时 G 不进入任何无量纲单项式（§4.7 否定结论，单项式类内）"
+    location: "§4.7(四)"
+    covers: []
+    verification:
+      type: lean4
+      declaration: "no_dimensionless_G"
+      role: main
+      result: pass@2026-10-15
+      statement_check: "approved@2026-10-15 by 作者复核（Lean 陈述即'指数 h=0 ⇒ a=0'）"
+      artifact: G_alpha_mu0_repo/src/G_dimension_lattice.lean
+      notes: "配套 dimMono_param / Pi1_dimensionless / alpha_dimensionless；依赖 [propext, Quot.sound]"
+
+  - id: C8
+    statement: "Arb 认证区间下 α²μ₀ 与 G 不相交，α²μ₀>G 为严格事实（独立球口径与完全相关口径两版证书结论一致）；SI 口径 116σ"
+    location: "§4.8"
+    covers: []
+    verification:
+      type: numeric_recompute
+      role: main
+      result: pass@2026-10-16
+      artifact: G_alpha_mu0_repo/results/q3_arb_results.json
+      notes: "disjoint 由 Arb 原生 overlaps() 判定；证书回放在 Lean 中为 cert_gap_pos + alpha2mu0_gt_G_of_cert；第二枚完全相关证书见 results/q5_correlated_and_spacing.json（u_r=4.5222e-10、间距 115.42 u(G)、sigma=116.42），与独立球口径（u_r=4.6063e-10）宽度差仅 1.9%"
+
+  - id: C9
+    statement: "Λ≠α⁻¹、α²Λ²≠1、Π₁ 无量纲且与 α 无低复杂度贴近 1 的关系"
+    location: "§4.7(二)(三)、§4.8"
+    covers: []
+    verification:
+      type: numeric_recompute
+      role: supporting
+      result: pass@2026-10-15
+      artifact: G_alpha_mu0_repo/results/q3_arb_results.json
+      notes: "Λ−α⁻¹=3.046×10⁻⁴±2.24×10⁻⁸（不含 0）；(三) 仅限 |p|,|q|≤3，全域属未解丢番图问题"
