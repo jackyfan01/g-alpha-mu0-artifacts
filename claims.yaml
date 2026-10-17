@@ -91,7 +91,7 @@ claims:
       result: pass@2026-10-15
       statement_check: "approved@2026-10-15 by 作者复核（Lean 陈述即'指数 h=0 ⇒ a=0'）"
       artifact: src/G_dimension_lattice.lean
-      notes: "配套 dimMono_param / Pi1_dimensionless / alpha_dimensionless；依赖 [propext, Quot.sound]"
+      notes: "配套 dimMono_param / Pi1_dimensionless / alpha_dimensionless；四条同属 [propext, Classical.choice, Quot.sound] 组（2026-10-17 复核：先前在本字段误记为 [propext, Quot.sound]，已改正；同一值见 lean 输出与 proof_scope.md）"
 
   - id: C8
     statement: "Arb 认证区间下 α²μ₀ 与 G 不相交，α²μ₀>G 为严格事实（独立球口径与完全相关口径两版证书结论一致）；SI 口径 116σ"
@@ -147,3 +147,30 @@ claims:
       result: pass@2026-10-17
       artifact: results/q8_gut_running.json
       notes: "M_Z 输入 PDG 口径：α_em^{-1}(M_Z)=127.952±0.009、sin²θ_W=0.23122±0.00004、α_s(M_Z)=0.1179±0.0009；规范化 α_1^{-1}=(3/5)cos²θ_W α_em^{-1}=59.020、α_2^{-1}=sin²θ_W α_em^{-1}=29.585、α_3^{-1}=8.4818；b_SM=(41/10,-19/6,-7)、b_MSSM=(33/5,1,-3)；M_SUSY 扫描 0.3/1/2.8/10 TeV -> M_X=1.4095/0.9850/0.7251/0.4964×10¹⁶ GeV，α_GUT^{-1}=25.17/26.03/26.76/27.67，a3-a1=-0.335/-0.595/-0.818/-1.093；M*c²/M_X=6.32-17.95（M*c² 落在扫描区间之外）。SM-only 非 SUSY 情形 α_1,α_2 交于 1.031×10¹³ GeV 但 α_3 在交点偏差 -5.58，不统一。诚实边界：仅 1 圈；M_X 非可观测量、结论只依赖量级与模型依赖性；2 圈对照 Bourilkov 2015（arXiv:1503.01756，M_SUSY≈2.8 TeV 处 M_GUT=1.05±0.07×10¹⁶）把 1 圈值抬高约 40%，仍使 M*c² ≈8.5 倍高于区间"
+
+  - id: C13
+    statement: "§4.7(五)：无量纲单项式在乘法/取逆/自然数幂/整数幂四种运算下封闭（前两者的合成即有理函数闭包）；超越函数由类型规则 transTy 接续（有定义 ⟺ 实参无量纲且结果无量纲），其否定式拒绝任何非零量纲实参"
+    location: "§4.7(五)"
+    covers: []
+    verification:
+      type: lean4
+      declaration: "dimensionless_mul_closed, dimensionless_inv_closed, dimensionless_npow_closed, dimensionless_zpow_closed, dimOf_mul, dimOf_inv, transTy_spec, transTy_rejects_dimensional, no_fractional_exponent"
+      role: supporting
+      result: pass@2026-10-17
+      statement_check: "approved@2026-10-17 by 作者复核"
+      artifact: src/G_dimension_lattice.lean
+      notes: "把 C7 的否定结论从单项式扩到'单项式经四则运算与整数幂复合、再经保无量纲超越映射'的有界表达式类。公理分布：四条闭包律 + dimOf_mul/dimOf_inv 属 [propext, Classical.choice, Quot.sound] 组；transTy_spec/transTy_rejects_dimensional 仅 [propext]；no_fractional_exponent 属 [propext, Quot.sound] 组。两条机器定位的边界：分数指数需 ℚ（故 no_fractional_exponent 把 1/2 ∉ ℤ 化为'2n=1 在 ℤ 上无解'）；超越常数的数值内容超出 Lean core（交由 C14 的区间算术承担）。仍**不**声称已机械化任意表达式类的不可能性"
+
+  - id: C14
+    statement: "§4.8：α²μ₀ 的认证区间以 (i) 机器可读的定向舍入 trace（网格 10⁻⁶⁴，8 个初等步骤，逐步记录舍入方向）配独立精确有理数复核器（8/8 断言通过）导出，并 (ii) 在 Lean 内以区间内核 Ival.mul_contains/Ival.sq_contains 回放；代入 SI 精确值与 CODATA 展示值后，α²μ₀ > G_hi 等价于一条纯整数不等式，由 decide 在核内判定且不依赖任何公理"
+    location: "§4.8"
+    covers: []
+    verification:
+      type: lean4
+      declaration: "Ival.mul_contains, Ival.sq_contains, q4_exact_gap, q4_gt_of_bounds, q4_trace_endpoints_gap"
+      role: main
+      result: pass@2026-10-17
+      statement_check: "approved@2026-10-17 by 作者复核"
+      artifact: results/q9_arb_trace.json
+      notes: "回答外审 Q4。trace 与复核器：src/q9_arb_trace.py -> results/q9_arb_trace.json + results/q9_arb_trace_check.json（all_ok=true, 8/8）；每步把端点向外舍入到 10⁻⁶⁴ 并标注 rounding.lo='down'/hi='up'；独立路径断言 reg_lo ≤ exact_lo ≤ exact_hi ≤ reg_hi 与 gap>0；另用 Arb(128 bit) 参考区间核对 trace 区间**包含**它。Lean 侧：Ival.mul_contains/Ival.sq_contains 属 [propext, Quot.sound] 组，只用 core 的 Int.mul_le_mul；q4_exact_gap 与 q4_trace_endpoints_gap 由 decide 判定，**不依赖任何公理**（前者比 trace 更强：认证精确有理数本身已隔开，无需舍入；后者直接对 trace JSON 登记的 10⁻⁶⁴ 网格整数端点下结论）。诚实边界：除法步在 trace 中为'精确有理端点相除'，Lean 内核未把该步公理化；Arb 依赖图未导出"
+

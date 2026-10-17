@@ -26,6 +26,7 @@ python q5b_alpha_ball_nist_caliber.py # alpha 端球口径的三档压力测试
 python q6_codata_history.py       # 各版 CODATA 输入球下的认证区间间隙轨迹（§4.8 表 4）
 python q7_mdl_prior.py            # MDL/描述长度先验：家族规模惩罚折进单一统计量（§4.4）
 python q8_gut_running.py          # 单圈 RGE + M_SUSY 阈值扫描：M_X 区间 vs M*c²（§4.5/§5.5）
+python q9_arb_trace.py            # α²μ₀ 的定向舍入 trace（10⁻⁶⁴ 网格，含方向标注）+ 独立精确有理数复核器（§4.8）
 
 # 3) Lean 4 验证（无需 mathlib）
 lean src/G_alpha_squared_mu_zero.lean    # 打印 6 项判定，全部 PASS
@@ -66,7 +67,7 @@ arXiv:2409.03787）：
 ```
 src/
   G_alpha_squared_mu_zero.lean   Lean 4：定理1形式证明 + 定理2/4/5/6数值检查
-  G_dimension_lattice.lean       Lean 4：量纲格不变量分类 + Arb 证书回放（无 Mathlib）
+  G_dimension_lattice.lean       Lean 4：量纲格不变量分类 + 闭包律/超越函数类型规则 + Arb 证书回放与区间内核（无 Mathlib，26 条定理）
   verify_numerical.py            论文全部数值断言的独立重算
   R3_lambda_search.py            Lambda 全族穷举（定理4）
   q2_lambda_null_model.py        零模型显著性检验（定理 4：事后选择偏差）
@@ -77,6 +78,7 @@ src/
   q6_codata_history.py           CODATA 2010/2014/2018/2022 各自输入球下的区间回溯（§4.8 稳健性表）
   q7_mdl_prior.py                MDL/描述长度先验：家族规模惩罚折进单一统计量（§4.4）
   q8_gut_running.py              单圈 RGE（SM→MSSM）+ M_SUSY 阈值扫描：M_X 区间与输入不确定度（§4.5/§5.5）
+  q9_arb_trace.py                α²μ₀ 的定向舍入 trace（10⁻⁶⁴ 网格、8 步、含舍入方向标注）+ 独立精确有理数复核器（§4.8）
   make_manifest.py               生成/校验 MANIFEST.sha256（脚本与结果 JSON 的 SHA-256）
   R4_interval_arithmetic.py      mpmath 区间交叉核对
 results/
@@ -89,20 +91,30 @@ results/
   q6_codata_history.json         四版 CODATA 证书 + G 中心/不确定度阈值 + 历史位移
   q7_mdl_prior.json             MDL 两段码：L0/L_p/残差/ΔL/BF10/家族界扫描/盈亏平衡
   q8_gut_running.json           单圈 RGE：M_Z 输入、b 系数、M_SUSY 扫描的 M_X/α_GUT、输入不确定度、2 圈对照
+  q9_arb_trace.json             α²μ₀ 的定向舍入 trace：8 步算子/输入区间/精确有理值/舍入端点与方向 + Arb 参考
+  q9_arb_trace_check.json       独立精确有理数复核器的 8 条断言（all_ok=true）
   mpi_crosscheck.json            mpmath 区间交叉核对结果
 MANIFEST.sha256                  src/*.py 与 results/*.json 的 SHA-256（由 make_manifest.py 生成）
 ```
 
 逐位复现核对：`sha256sum -c MANIFEST.sha256`（在任何一次重跑改写结果后须先 `python src/make_manifest.py` 重新生成清单）。
 
-Lean 侧自检：`lean src/G_dimension_lattice.lean` 打印
+Lean 侧自检：`lean src/G_dimension_lattice.lean` 逐条打印 26 个定理的公理依赖，末尾给出 `G_dimension_lattice: 全部定理通过类型检查`。分组（2026-10-17 复测）：
 
 ```
+'thm1_monoid' does not depend on any axioms
+'gauss_mu0_dimensionless' does not depend on any axioms
+'q4_exact_gap' does not depend on any axioms
+'q4_trace_endpoints_gap' does not depend on any axioms
+'transTy_spec' depends on axioms: [propext]
+'transTy_rejects_dimensional' depends on axioms: [propext]
 'no_dimensionless_G' depends on axioms: [propext, Classical.choice, Quot.sound]
+'dimensionless_zpow_closed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'alpha2mu0_gt_G_of_cert' depends on axioms: [propext, Quot.sound]
+'Ival.mul_contains' depends on axioms: [propext, Quot.sound]
 ```
 
-即无 `sorryAx`，只依赖 Lean 三条基础公理。
+即**无 `sorryAx`**：4 条不依赖任何公理，2 条仅 `[propext]`，12 条依赖三条基础公理 `[propext, Classical.choice, Quot.sound]`，8 条依赖 `[propext, Quot.sound]`。
 
 ## 主要可复现结论
 
@@ -114,8 +126,10 @@ Lean 侧自检：`lean src/G_dimension_lattice.lean` 打印
   **统计不显著**。
 - 系数空间置换检验在此类"事后挑选"问题上**退化**：$P \approx 1-e^{-1}$ 只反映是否抽中 $\Lambda$。
 - $\Lambda \neq \alpha^{-1}$、$\alpha^2\Lambda^2 \neq 1$ 均为 Arb 认证判定（区间不含 0 / 不含 1）。
-- 完全相关口径的第二证书（$\mu_0$ 由 $\alpha$ 在同一 trace 内导出）给 $u_r(\alpha^2\mu_0)=4.52\times10^{-10}$；独立球口径为 $4.61\times10^{-10}$，宽 $1.86\%$。**这 1.86\% 不是独立性的代价**：把 $\mu_0$ 端球换成传递值 $1.894\times10^{-16}$ 后两口径只差 $10^{-5}$ 量级（工件 	exttt{independence\_vs\_display}），差额来自 CODATA 把 $u(\mu_0)$ 向上舍入展示成 $(20)$（`q5_correlated_and_spacing.py`）。
+- 完全相关口径的第二证书（$\mu_0$ 由 $\alpha$ 在同一 trace 内导出）给 $u_r(\alpha^2\mu_0)=4.52\times10^{-10}$；独立球口径为 $4.61\times10^{-10}$，宽 $1.86\%$。**这 1.86\% 不是独立性的代价**：把 $\mu_0$ 端球换成传递值 $1.894\times10^{-16}$ 后两口径只差 $10^{-5}$ 量级（工件 `independence_vs_display`），差额来自 CODATA 把 $u(\mu_0)$ 向上舍入展示成 $(20)$（`q5_correlated_and_spacing.py`）。
 - 同一零模型的**解析精确** $p$：均匀随机靶落进第 $i$ 个 Voronoi 胞的概率本就是 $w_i/R$，所以解析闭式 $\lvert\bigcup_i[V_i\pm d]\cap[V_{\min},V_{\max}]\rvert/R$ 与 Monte Carlo 估的是同一个量；五个家族给 0.0111 / 0.0198 / 0.0322 / 0.0698 / 0.1270，与 MC 的 0.12708 在**小数点后三位**一致（差 $9.2\times10^{-5}$，为主口径 MC 标准误 $5.3\times10^{-4}$ 的 $0.17$ 倍）。易错点：对称的 $\min(2d,w_i)/R$ 是错的（本家族有 $17.15\%$ 的相邻间距小于 $2d_{\mathrm{obs}}$，会给出 0.1310），正确式是 $\sum_i(\min(d,L_i)+\min(d,R_i))/R$。
+- **闭包性与超越函数类型规则**（回答外审 Q2）：无量纲单项式在**乘法 / 取逆 / 自然数幂 / 整数幂**下封闭（`dimensionless_{mul,inv,npow,zpow}_closed`；前两条合成**有理函数闭包**），超越函数由类型规则 `transTy` 接续（有定义 ⟺ 实参无量纲，其否定式拒绝任何非零量纲实参）。两类边界已在机器上定位而非泛泛而谈：**分数指数**需 $\mathbb{Q}$（`no_fractional_exponent` 把 $\tfrac12\notin\mathbb{Z}$ 化为 `2n=1` 在 $\mathbb{Z}$ 上无解），**超越常数的数值内容**超出 Lean core（交 §4.8 区间算术承担）。故形式化覆盖的是"单项式经四则运算与整数幂复合、再经保无量纲超越映射"的**有界**表达式类，本文**不**声称已机械化任意表达式类的不可能性。
+- **定向舍入 trace 与核内回放**（回答外审 Q4）：`src/q9_arb_trace.py` 用**精确有理数**（`fractions.Fraction`，无浮点、不调 Arb）把完全相关口径 $\alpha^2\mu_0 = 2\alpha^3h/(e^2c)$ 的区间传播拆成 8 个初等步骤，每步把端点**向外**舍入到固定网格 $10^{-64}$ 并标注舍入方向（`rounding.lo="down"`、`hi="up"`），落盘 `results/q9_arb_trace.json`；**独立路径**回放同一 trace 逐条断言"登记区间包住真值 + 间隙 > 0"，8/8 通过（`results/q9_arb_trace_check.json`），并用 Arb(128 bit) 参考区间核对 trace 区间**包含**它。Lean 侧新增区间内核 `Ival.mul_contains`/`Ival.sq_contains`（只用 core 的 `Int.mul_le_mul`）；更强的是：代入 SI 精确值与 CODATA 展示值后 $\alpha^2\mu_0 > G_{\text{hi}}$ 等价于一条**纯常量整数不等式**，`decide` 直接判定且**不依赖任何公理**——该判据连舍入都不需要，比 trace 更强；`q4_trace_endpoints_gap` 另对 trace JSON 登记的 $10^{-64}$ 网格整数端点下结论。
 
 ## 许可与引用
 

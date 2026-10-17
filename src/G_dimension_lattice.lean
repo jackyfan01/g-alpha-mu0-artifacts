@@ -66,6 +66,10 @@ def D.mul (x y : Dim) : Dim :=
 def D.pow (n : Int) (x : Dim) : Dim :=
   ⟨n * x.m, n * x.l, n * x.t, n * x.i⟩
 
+/-- 量纲取逆 = 指数取负 -/
+def D.neg (x : Dim) : Dim :=
+  ⟨-x.m, -x.l, -x.t, -x.i⟩
+
 def dG     : Dim := ⟨-1,  3, -2,  0⟩
 def dMu0   : Dim := ⟨ 1,  1, -2, -2⟩
 def dLight : Dim := ⟨ 0,  1, -1,  0⟩
@@ -183,6 +187,151 @@ theorem gauss_dimG_ne_dim_alpha2mu0 :
 --   差别只在 α 的**数值**定义 α = e²/(4πℏc)（HL）vs α = e²/(ℏc)（Gaussian）里那个 4π。
 
 -- ============================================================================
+-- Q2：单项式模型的闭包性质与超越函数类型规则
+-- ============================================================================
+-- 外审 Q2 问：除单项式外，哪些表达式类（乘积、幂、有理函数、保持无量纲性的超越映射）在
+-- 下一步形式化中是可处理的？表示超越常数/函数会遇到什么障碍？
+--
+-- 本节的答复分三层：
+--   (一) **闭包**：无量纲单项式在乘法、取逆、整数幂下封闭。这三条合起来即"有理函数闭包"
+--        （有理函数 = 乘 + 逆，见 dimensionless_mul_closed / dimensionless_inv_closed），
+--        也就是下一层可直接接入的表达式类。
+--   (二) **超越函数类型规则**：exp/log/sin 等要求**无量纲**实参且输出无量纲。Lean core 无实数
+--        与超越函数，故此处置于**量纲层面**：transTy 把"参数必须无量纲、结果无量纲"实现为
+--        量纲上的部分函数，transTy_spec 证明它恰好只在零量纲上有定义，
+--        transTy_rejects_dimensional 证明它对任何非零量纲一律拒绝。这条规则与 (一) 合成，
+--        即得"超越映射把无量纲子幺半群映回自身"。
+--   (三) **障碍**（诚实边界）：① 分数指数/√ 需要 ℚ，整数指数格容纳不下——no_fractional_exponent
+--        把"1/2 不是整数"机械化为"方程 2n = 1 在 ℤ 上无解"；这正是为什么 α 的 √ 形式
+--        必须先在实数量纲层消解，而不能直接进入格模型。② 超越常数的**数值**（π、e 的十进制展开）
+--        与量纲无关，本模型只断言它们无量纲、因而不改变任何单项式的量纲；其数值内容不在 Lean core
+--        的射程内，须由 Arb/区间算术承担（见第 Q4 部分）。
+
+/-- 以 (G, μ₀, c, ℏ, e, m) 为生成元的单项式指数向量；α 无量纲，不占指数位。 -/
+structure MonoD where
+  g  : Int
+  mu : Int
+  c  : Int
+  hb : Int
+  e  : Int
+  m  : Int
+
+def MonoD.mul (x y : MonoD) : MonoD :=
+  ⟨x.g + y.g, x.mu + y.mu, x.c + y.c, x.hb + y.hb, x.e + y.e, x.m + y.m⟩
+
+def MonoD.inv (x : MonoD) : MonoD :=
+  ⟨-x.g, -x.mu, -x.c, -x.hb, -x.e, -x.m⟩
+
+/-- 自然数幂（结构递归；整数幂见 zpow） -/
+def MonoD.npow : Nat → MonoD → MonoD
+  | 0, _ => ⟨0, 0, 0, 0, 0, 0⟩
+  | k + 1, x => MonoD.mul (MonoD.npow k x) x
+
+/-- 整数幂：非负走 npow，负走逆（逆的闭包已单列）。 -/
+def MonoD.zpow (n : Int) (x : MonoD) : MonoD :=
+  if 0 ≤ n then MonoD.npow n.toNat x else MonoD.inv (MonoD.npow (-n).toNat x)
+
+/-- 把六个指数喂给 dimMono 得量纲。 -/
+def dimOf (x : MonoD) : Dim := dimMono x.g x.mu x.c x.hb x.e x.m
+
+def zeroD : Dim := ⟨0, 0, 0, 0⟩
+
+def Dimless (d : Dim) : Prop := d = zeroD
+
+/-- 乘法的量纲同态性（这是下面所有闭包律的种子）。 -/
+theorem dimOf_mul (x y : MonoD) :
+    dimOf (MonoD.mul x y) = D.mul (dimOf x) (dimOf y) := by
+  simp only [dimOf, MonoD.mul, dimMono, D.mul, D.pow, dG, dMu0, dLight, dHbar, dE, dMass,
+    Dim.mk.injEq]
+  omega
+
+/-- 取逆的量纲反同态性。 -/
+theorem dimOf_inv (x : MonoD) :
+    dimOf (MonoD.inv x) = D.neg (dimOf x) := by
+  simp only [dimOf, MonoD.inv, dimMono, D.mul, D.pow, D.neg, dG, dMu0, dLight, dHbar, dE,
+    dMass, Dim.mk.injEq]
+  omega
+
+/-- 闭包律 1：无量纲 × 无量纲 = 无量纲。 -/
+theorem dimensionless_mul_closed {x y : MonoD}
+    (hx : Dimless (dimOf x)) (hy : Dimless (dimOf y)) :
+    Dimless (dimOf (MonoD.mul x y)) := by
+  simp only [Dimless, dimOf, MonoD.mul, dimMono, D.mul, D.pow, zeroD, dG, dMu0, dLight, dHbar,
+    dE, dMass, Dim.mk.injEq] at hx hy ⊢
+  omega
+
+/-- 闭包律 2：无量纲的逆仍无量纲（与闭包律 1 合成即"有理函数闭包"）。 -/
+theorem dimensionless_inv_closed {x : MonoD} (hx : Dimless (dimOf x)) :
+    Dimless (dimOf (MonoD.inv x)) := by
+  simp only [Dimless, dimOf, MonoD.inv, dimMono, D.mul, D.pow, zeroD, dG, dMu0, dLight,
+    dHbar, dE, dMass, Dim.mk.injEq] at hx ⊢
+  omega
+
+/-- 闭包律 3：无量纲的自然数幂无量纲（对 k 归纳，每一步用闭包律 1）。 -/
+theorem dimensionless_npow_closed {x : MonoD} (hx : Dimless (dimOf x)) (k : Nat) :
+    Dimless (dimOf (MonoD.npow k x)) := by
+  induction k with
+  | zero =>
+      simp only [MonoD.npow, Dimless, dimOf, dimMono, D.mul, D.pow, zeroD, dG, dMu0, dLight,
+        dHbar, dE, dMass, Dim.mk.injEq]
+      omega
+  | succ k ih =>
+      simp only [MonoD.npow]
+      exact dimensionless_mul_closed ih hx
+
+/-- 闭包律 4：无量纲的整数幂无量纲（负指数经逆，复用闭包律 2、3）。 -/
+theorem dimensionless_zpow_closed {x : MonoD} (hx : Dimless (dimOf x)) (n : Int) :
+    Dimless (dimOf (MonoD.zpow n x)) := by
+  unfold MonoD.zpow
+  split
+  · exact dimensionless_npow_closed hx _
+  · exact dimensionless_inv_closed (dimensionless_npow_closed hx _)
+
+/-- 超越函数的类型规则（量纲层面）：仅当实参无量纲时有定义，且结果无量纲。
+    这里把它实现为量纲上的部分函数——对零量纲返回零量纲，否则返回 none。 -/
+def transTy (d : Dim) : Option Dim :=
+  if d.m = 0 ∧ d.l = 0 ∧ d.t = 0 ∧ d.i = 0 then some zeroD else none
+
+/-- **类型规则的特化**：exp/log/sin 有定义 ⟺ 实参量纲为零，且输出量纲为零。 -/
+theorem transTy_spec (d : Dim) : transTy d = some zeroD ↔ d = zeroD := by
+  unfold transTy
+  by_cases h : d.m = 0 ∧ d.l = 0 ∧ d.t = 0 ∧ d.i = 0
+  · rw [if_pos h]
+    constructor
+    · intro _
+      obtain ⟨hm, hl, ht, hi⟩ := h
+      cases d with
+      | mk m l t i => simp_all [zeroD]
+    · intro _
+      rfl
+  · rw [if_neg h]
+    constructor
+    · intro hc
+      exact absurd hc (by simp)
+    · intro hd
+      exact absurd (by rw [hd]; exact ⟨rfl, rfl, rfl, rfl⟩) h
+
+/-- **类型规则的否定形式**：任何非零量纲的实参都不能喂给超越函数。 -/
+theorem transTy_rejects_dimensional (d : Dim) (hd : d ≠ zeroD) :
+    transTy d = none := by
+  unfold transTy
+  by_cases h : d.m = 0 ∧ d.l = 0 ∧ d.t = 0 ∧ d.i = 0
+  · rw [if_pos h]
+    exfalso
+    apply hd
+    obtain ⟨hm, hl, ht, hi⟩ := h
+    cases d with
+    | mk m l t i => simp_all [zeroD]
+  · rw [if_neg h]
+
+/-- **障碍的机械化**：分数指数落在 ℤ 格之外——方程 2n = 1 在 ℤ 上无解。
+    这解释了为什么 √α 之类必须先搬到实数量纲层，而不能在整数指数格内表示。 -/
+theorem no_fractional_exponent : ¬ (∃ n : Int, 2 * n = 1) := by
+  intro h
+  obtain ⟨n, hn⟩ := h
+  omega
+
+-- ============================================================================
 -- Q7：Arb 证书回放
 -- ============================================================================
 -- §4.8 的区间不相交由 Arb 在 Lean 之外算出（见 results/q3_arb_results.json）。
@@ -219,14 +368,103 @@ theorem alpha2mu0_gt_G_of_cert (x y : Int)
   simp only [a2mu0_lo, g_hi] at hx hy
   omega
 
+-- ============================================================================
+-- Q4：定向舍入 trace 的 Lean 侧回放内核
+-- ============================================================================
+-- 外审 Q4 问：能否导出带定向舍入标注的机器可读 trace，并在 Lean 内用一个小型可信内核
+-- （或外部复核器）验证它？此处采取"外部复核器 + Lean 内核"双轨：
+--
+--   • 外部复核器：src/q9_arb_trace.py 用精确有理数（fractions.Fraction，无浮点、无 Arb）
+--     把 α²μ₀ = 2α³h/(e²c) 的区间传播拆成 8 步，每步把上下界分别向外舍入到 10⁻⁶⁴ 网格，
+--     落盘 results/q9_arb_trace.json（每步算子/输入/精确值/舍入方向）与
+--     results/q9_arb_trace_check.json（逐条回放断言）。实测 8/8 通过。
+--     该脚本还用 python-flint 的 Arb（128 bit）独立算一份参考区间，核对 trace 区间**包含**它。
+--
+--   • Lean 内核（本节）：先把"定向舍入的区间运算 ⇒ 结论"这一层**规则**机械化——
+--     Ival.mul_contains / Ival.sq_contains 证明非负区间的乘、平方是对精确值的**外包围**；
+--     再给出**假设更弱、结论更强**的整数形式：把 SI 精确值与 CODATA 展示值代入后，
+--     α、h、e、c、G 都写成整数比
+--         α_lo = 72973525632 / 10¹³,   h = 662607015 / 10⁴²,
+--         e    = 1602176634 / 10²⁸,    c = 299792458,   G_hi = 667445 / 10¹⁶
+--     判定式 α²μ₀ > G_hi 等价于纯整数比较
+--         2·72973525632³·662607015·10¹⁶ > 667445·10²⁵·1602176634²·299792458
+--     两端皆为常量，q4_exact_gap 由 decide 在核内直接判定（不依赖任何公理），
+--     因而**连舍入都不需要**——这是比 trace 更强的一条交叉验证。
+--
+-- 诚实边界：α 的展示值（7.2973525643e-3 ± 1.1e-12）本身来自 CODATA 上游合并，不在本节射程内；
+-- 本节证明的是"给定该球，结论成立"，与第 Q7 部分的范围界定一致。
+
+/-- 整数端点区间 [lo, hi]。 -/
+structure Ival where
+  lo : Int
+  hi : Int
+
+def Ival.Contains (x : Ival) (v : Int) : Prop := x.lo ≤ v ∧ v ≤ x.hi
+
+/-- 非负区间（下界 ≥ 0）。 -/
+def Ival.nonneg (x : Ival) : Prop := 0 ≤ x.lo
+
+/-- 区间乘：端点各自相乘（仅在非负时保序，由 mul_contains 给出健全性）。 -/
+def Ival.mul (x y : Ival) : Ival := ⟨x.lo * y.lo, x.hi * y.hi⟩
+
+/-- 区间平方。 -/
+def Ival.sq (x : Ival) : Ival := ⟨x.lo * x.lo, x.hi * x.hi⟩
+
+/-- **乘法健全性**：若 a ∈ x、b ∈ y 且 x、y 非负，则 a·b ∈ x·y。
+    这正是 trace 里 alpha_sq / alpha_cu / num 三步所依赖的规则。 -/
+theorem Ival.mul_contains {x y : Ival} {a b : Int}
+    (hx1 : x.lo ≤ a) (hx2 : a ≤ x.hi)
+    (hy1 : y.lo ≤ b) (hy2 : b ≤ y.hi)
+    (hx : x.nonneg) (hy : y.nonneg) :
+    (Ival.mul x y).Contains (a * b) := by
+  unfold Ival.Contains Ival.mul Ival.nonneg at *
+  constructor
+  · exact Int.mul_le_mul hx1 hy1 (by omega) (by omega)
+  · exact Int.mul_le_mul hx2 hy2 (by omega) (by omega)
+
+/-- **平方健全性**（乘法健全性的特例，trace 的 alpha_sq 步）。 -/
+theorem Ival.sq_contains {x : Ival} {a : Int}
+    (hx1 : x.lo ≤ a) (hx2 : a ≤ x.hi) (hx : x.nonneg) :
+    (Ival.sq x).Contains (a * a) := by
+  have h := Ival.mul_contains hx1 hx2 hx1 hx2 hx hx
+  simpa only [Ival.sq, Ival.mul, Ival.Contains] using h
+
+/-- **精确整数判据**（外审 Q4 的加强版）：代入 SI 精确值与 CODATA 展示值后，
+    α²μ₀ > G_hi 变成一条常量整数不等式，由 decide 在核内判定，不依赖任何公理。
+    注意 h 的尾数有 9 位，故 h = 662607015/10⁴²（不是 10⁴¹）。 -/
+theorem q4_exact_gap :
+    (2 * 72973525632 ^ 3 * 662607015 : Int) * 10 ^ 16
+      > 667445 * (10 ^ 25 * 1602176634 ^ 2 * 299792458) := by
+  decide
+
+/-- 与 Q7 回放引理同型：任何落入该整数区间的一对量仍满足 x > y。 -/
+theorem q4_gt_of_bounds (x y : Int)
+    (hx : x ≥ (2 * 72973525632 ^ 3 * 662607015 : Int) * 10 ^ 16)
+    (hy : y ≤ 667445 * (10 ^ 25 * 1602176634 ^ 2 * 299792458)) : x > y := by
+  have h := q4_exact_gap
+  omega
+
+/-- **与导出工件直接对接**：trace JSON（results/q9_arb_trace.json）里登记的
+    10⁻⁶⁴ 网格整数端点 result.a2mu0_lo_scaled_int 与 result.G_hi_scaled_int 之差为正。
+    这使 Lean 内核可对**外部复核器落盘的具体数字**下结论，而非只对公式下结论。 -/
+theorem q4_trace_endpoints_gap :
+    (669176255311555437642179286715984120030000500084569479 : Int)
+      > 667445000000000000000000000000000000000000000000000000 := by
+  decide
+
 -- 自检：对附录 D 清单中的全部定理逐条打印公理依赖，不得出现 sorryAx。
--- 实测输出（2026-10-16，Lean 4.33.1 core，无 Mathlib）：
---   thm1_monoid            → 不依赖任何公理
---   dimMono_eq_zero_iff / dimMono_param / Pi1_dimensionless / alpha_dimensionless
---   no_dimensionless_G     → [propext, Classical.choice, Quot.sound]
---   dimG_ne_dim_mu0 / cert_gap_pos / alpha2mu0_gt_G_of_cert → [propext, Quot.sound]
---   gauss_alpha_dimensionless / gauss_dimG_ne_dim_alpha2mu0 → 同上两条基础公理
---   gauss_mu0_dimensionless → 不依赖任何公理（rfl）
+-- 实测输出（2026-10-17，Lean 4.33.1 core，无 Mathlib），共 26 条：
+--   thm1_monoid / gauss_mu0_dimensionless                 → 不依赖任何公理
+--   q4_exact_gap / q4_trace_endpoints_gap                 → 不依赖任何公理（decide 核内判定）
+--   transTy_spec / transTy_rejects_dimensional            → [propext]
+--   dimG_ne_dim_mu0 / gauss_dimG_ne_dim_alpha2mu0
+--     / cert_gap_pos / alpha2mu0_gt_G_of_cert
+--     / no_fractional_exponent / Ival.mul_contains
+--     / Ival.sq_contains / q4_gt_of_bounds                → [propext, Quot.sound]
+--   其余（dimMono_* / Pi1 / alpha / no_dimensionless_G
+--     / gauss_alpha_dimensionless / dimOf_mul / dimOf_inv
+--     / dimensionless_{mul,inv,npow,zpow}_closed）         → [propext, Classical.choice, Quot.sound]
+-- 全部落在白名单 [propext, Classical.choice, Quot.sound] 之内，**无 sorryAx**。
 #print axioms thm1_monoid
 #print axioms dimMono_eq_zero_iff
 #print axioms dimMono_param
@@ -239,5 +477,21 @@ theorem alpha2mu0_gt_G_of_cert (x y : Int)
 #print axioms gauss_dimG_ne_dim_alpha2mu0
 #print axioms cert_gap_pos
 #print axioms alpha2mu0_gt_G_of_cert
+-- Q2（闭包与超越函数类型规则）
+#print axioms dimOf_mul
+#print axioms dimOf_inv
+#print axioms dimensionless_mul_closed
+#print axioms dimensionless_inv_closed
+#print axioms dimensionless_npow_closed
+#print axioms dimensionless_zpow_closed
+#print axioms transTy_spec
+#print axioms transTy_rejects_dimensional
+#print axioms no_fractional_exponent
+-- Q4（定向舍入 trace 的 Lean 侧回放内核）
+#print axioms Ival.mul_contains
+#print axioms Ival.sq_contains
+#print axioms q4_exact_gap
+#print axioms q4_gt_of_bounds
+#print axioms q4_trace_endpoints_gap
 
 #print "G_dimension_lattice: 全部定理通过类型检查"

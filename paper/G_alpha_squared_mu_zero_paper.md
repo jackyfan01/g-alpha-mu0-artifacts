@@ -361,17 +361,21 @@ $$
 
 4.  `dimG_ne_dim_mu0`：$[G] \neq [\mu_0]$；因 $\alpha$ 无量纲，$[\alpha^2\mu_0] = [\mu_0]$，故 SI 中的量纲矛盾是**可判定**事实。
 
-附录 D 清单中的全部定理均已逐条 `#print axioms` 核验（2026-10-17 复测），十二条全部无 `sorryAx`：
+**（五）闭包性与超越函数类型规则**：单项式只是表达式类的最底层。自然的下一个问题是：哪些运算能把这个模型推得更远？本文在同一文件里机器证明了四条**闭包律**——无量纲单项式在**乘法**（`dimensionless_mul_closed`）、**取逆**（`dimensionless_inv_closed`）、**自然数幂**（`dimensionless_npow_closed`，对指数归纳，每步复用乘法闭包）与**整数幂**（`dimensionless_zpow_closed`，负指数经逆）下封闭。前两条合起来即**有理函数闭包**：任何由无量纲单项式经四则运算生成的表达式仍无量纲。超越函数由一条**类型规则**接续：`transTy_spec` 证明"$\exp,\log,\sin$ 等有定义 $\iff$ 实参无量纲且结果无量纲"，`transTy_rejects_dimensional` 给出其否定形式（任何非零量纲的实参一律被拒）。两者合成，即得"超越映射把无量纲子幺半群映回自身"这一层面的形式依据。于是本模型可直接覆盖的表达式类是"**单项式经加减乘除与整数幂复合，再经保无量纲的超越映射**"。
 
-- `thm1_monoid`：**不依赖任何公理**；
+**可达边界（诚实声明）**：障碍有两类，均已在机器上定位，而非泛泛而谈。其一，**分数指数**（如 $\sqrt{\alpha}$）需要 $\mathbb{Q}$，整数指数格容纳不下——`no_fractional_exponent` 把"$\tfrac12$ 不是整数"机械化为"方程 $2n=1$ 在 $\mathbb{Z}$ 上无解"，这正是为什么 $\sqrt{\cdot}$ 类运算必须先搬到实数量纲层消解，才能进入本模型。其二，**超越常数的数值**（$\pi$、$e$ 的十进制展开）与量纲无关：本模型只断言它们无量纲、因而不改变任何单项式的量纲；其数值内容超出 Lean core 的射程，须由区间算术承担（见 §4.8）。因此本文**不**声称已机械化"任何形式的可能关系都不存在"——闭包律把这一不可能性的**证据范围**从单项式扩到有理函数与保无量纲的超越复合，但它仍是一个**有界的**表达式类，边界由上述两条障碍钉住。
 
-- 五条量纲判定链依赖 `propext`、`Classical.choice` 与 `Quot.sound` 三条基础公理： `dimMono_eq_zero_iff`； `dimMono_param`； `Pi1_dimensionless`； `alpha_dimensionless`； `no_dimensionless_G`。
+附录 D 清单中的全部定理均已逐条 `#print axioms` 核验（2026-10-17 复测），二十六条全部无 `sorryAx`：
 
-- `dimG_ne_dim_mu0`、`cert_gap_pos`、`alpha2mu0_gt_G_of_cert`：依赖 `[propext, Quot.sound]`。
+- **不依赖任何公理**（四条）：`thm1_monoid`；`gauss_mu0_dimensionless`（`rfl`）；以及 §4.8 的两条常量判据 `q4_exact_gap` 与 `q4_trace_endpoints_gap`（由 `decide` 在核内直接判定）。
 
-- 附录 E 的 Gaussian 三条：`gauss_mu0_dimensionless` **不依赖任何公理**（`rfl`）；`gauss_alpha_dimensionless` 依赖 `[propext, Classical.choice, Quot.sound]`；`gauss_dimG_ne_dim_alpha2mu0` 依赖 `[propext, Quot.sound]`。
+- 仅依赖 `[propext]`（两条）：`transTy_spec`；`transTy_rejects_dimensional`。
 
-仍需说明其边界：形式化覆盖的是**单项式**（幂积）层面的不变量分类，不是任意表达式；把结论推广到含超越函数的表达式类需要额外的量纲不变性假设，本文不做此推广。
+- 依赖 `[propext, Classical.choice, Quot.sound]`：五条量纲判定链 `dimMono_eq_zero_iff`；`dimMono_param`；`Pi1_dimensionless`；`alpha_dimensionless`；`no_dimensionless_G`；Gaussian 的 `gauss_alpha_dimensionless`；§4.7(五) 的 `dimOf_mul`、`dimOf_inv` 与四条闭包律 `dimensionless_{mul,inv,npow,zpow}_closed`。
+
+- 依赖 `[propext, Quot.sound]`：`dimG_ne_dim_mu0`、`gauss_dimG_ne_dim_alpha2mu0`、`cert_gap_pos`、`alpha2mu0_gt_G_of_cert`、`no_fractional_exponent`，以及 §4.8 的区间内核 `Ival.mul_contains`、`Ival.sq_contains`、`q4_gt_of_bounds`。
+
+边界已在 (五) 中声明：形式化覆盖的是**单项式及其有理函数、整数幂与保无量纲超越复合**，边界由"分数指数需 $\mathbb{Q}$"与"超越常数的数值超出 core"两条障碍钉住；本文不声称已机械化任意表达式类的不可能性。
 
 **结论**：**不存在**在单位制变换下保持不变、且数值上体现"$G$ 与 $\alpha^2\mu_0$ 联系"的无量纲组合（单项式情形已机器证明）。$G \approx \alpha^2\mu_0$（SI）是纯 SI 单位制下的数值巧合，不具有单位制无关的物理意义。若引力与电磁学间存在真实联系，其表述对象应是 $\Pi_1$（或其质子-电子版本 $\Pi_{pe} = Gm_pm_e/(\hbar c) = 3.2\times10^{-42}$）与某个待求理论值之间的关系，而非 $G$ 与 $\mu_0$ 的数值比较。
 
@@ -429,9 +433,26 @@ $$
 
 **同一套 Arb 证书给出的其他严格判定**：$\Lambda - \alpha^{-1} = (3.0460 \pm 0.0207)\times10^{-4}$（端点区间 $[3.04578, 3.04619]\times10^{-4}$）**不含** $0$（故 $\Lambda = \alpha^{-1}$ 为假，不只是"近似"）；$\alpha^2\Lambda^2 = 1.000004446 \pm 7.8\times10^{-10}$ **不含** $1$；$M^*c^2 \in [8.9091, 8.9093]\times10^{16}$ GeV。
 
-**证书回放进 Lean**：区间端点由 Arb 在 Lean 之外算出，但"给定证书 $\Rightarrow$ 结论"这一步已机械化——把 $\alpha^2\mu_0$ 的下界与 $G$ 的上界以整数形式（单位 $10^{-22}$，向外取整以保证包含性）写入 `G_dimension_lattice.lean`，机器验证 `cert_gap_pos`（间距 $>0$）与回放引理 `alpha2mu0_gt_G_of_cert`（$\forall x\,y,\ x \ge \text{下界} \to y \le \text{上界} \to x > y$）。于是留在 Lean 之外的只有"端点来历"一项，而该项由 Arb 的定向舍入语义负责。
+**证书回放进 Lean，以及定向舍入 trace**：区间端点由 Arb 在 Lean 之外算出，但"给定证书 $\Rightarrow$ 结论"这一步已机械化——把 $\alpha^2\mu_0$ 的下界与 $G$ 的上界以整数形式（单位 $10^{-22}$，向外取整以保证包含性）写入 `G_dimension_lattice.lean`，机器验证 `cert_gap_pos`（间距 $>0$）与回放引理 `alpha2mu0_gt_G_of_cert`（$\forall x\,y,\ x \ge \text{下界} \to y \le \text{上界} \to x > y$）。这只重放了单调比较，本文现补上两条更靠前的链路：
 
-**仍未完成的部分**：其一，上述区间是**输入不确定度**与**算术舍入**的联合包络，它认证的是"给定 CODATA 输入下的推导"，而非把 CODATA 调整本身重新证明一遍；其二，Arb 侧的完整依赖图尚未导出为机器可读证书，Lean 内也未重放 Arb 的运算步骤（只重放了单调比较），Lean 生态的认证浮点库 FloatLib 仍不成熟。
+**（i）机器可读的定向舍入 trace 与独立复核器**。脚本 `src/q9_arb_trace.py` 用**精确有理数**（`fractions.Fraction`，全程无浮点、不调 Arb）把完全相关口径 $\alpha^2\mu_0 = 2\alpha^3 h/(e^2c)$ 的区间传播拆成 $8$ 个初等步骤（平方、相乘、标量、除法、输入球、相减判定），每步把上下界分别**向外**舍入到固定网格 $10^{-64}$，落盘 `results/q9_arb_trace.json`：逐步记录算子、输入区间、精确有理值、舍入后端点与**舍入方向标注**（`rounding.lo = "down"`、`rounding.hi = "up"`）。随后由**独立路径**回放同一 trace：用 `Fraction` 重算每步精确值，逐条断言 $\text{rounded\_lo} \le \text{exact\_lo}$ 且 $\text{rounded\_hi} \ge \text{exact\_hi}$（舍入确实向外），并断言 $\text{reg\_lo} \le \text{exact\_lo} \le \text{exact\_hi} \le \text{reg\_hi}$（登记区间包住真值）与最终间隙 $>0$；结果落盘 `results/q9_arb_trace_check.json`，实测 $8/8$ 断言通过。作为第三方交叉核对，脚本另用 Arb（128 bit）独立算一份参考区间，核对 trace 区间**包含**它。trace 给出的 $\alpha^2\mu_0 \in [6.6917625531, 6.6917625592]\times10^{-11}$、间隙 $1.731255\times10^{-13}$，与 §4.8 前文的完全相关证书逐位一致。
+
+**（ii）Lean 侧的运算内核，以及一条比 trace 更强的判据**。在 `G_dimension_lattice.lean` 中新增区间类型 `Ival` 与其运算，并机器证明**运算健全性**：`Ival.mul_contains`（若 $a\in x$、$b\in y$ 且 $x,y$ 非负，则 $a b \in x\!\cdot\!y$）与 `Ival.sq_contains`（平方特例）——这正是 trace 中平方/相乘各步所依赖的规则，且证明只用 core 的 `Int.mul_le_mul`，不引入任何新公理。进一步，代入 SI 精确值与 CODATA 展示值后，$\alpha,h,e,c,G$ 全可写成整数比 $$\begin{aligned}
+  &\alpha_{\text{lo}} = \frac{72973525632}{10^{13}},\quad
+  h = \frac{662607015}{10^{42}},\quad
+  e = \frac{1602176634}{10^{28}},\\[2pt]
+  &c = 299792458,\quad
+  G_{\text{hi}} = \frac{667445}{10^{16}},
+\end{aligned}
+
+$$
+于是判定式 $\alpha^2\mu_0 > G_{\text{hi}}$ 等价于一条**纯整数**不等式
+$$
+
+2\cdot 72973525632^{3}\cdot 662607015\cdot 10^{16}
+  \;>\; 667445\cdot 10^{25}\cdot 1602176634^{2}\cdot 299792458 ,$$ 两端皆为常量，定理 `q4_exact_gap` 由 `decide` 在核内直接判定且**不依赖任何公理**（注意 $h$ 的尾数有 9 位，故指数为 $10^{42}$ 而非 $10^{41}$）。这意味着本判据**连舍入都不需要**——比 trace 更强：trace 认证的是"逐舍入的外包围区间不相交"，而该整数判据认证的是"精确有理数本身就已隔开"。此外 `q4_trace_endpoints_gap` 直接对 trace JSON 里登记的 $10^{-64}$ 网格整数端点下结论，使 Lean 内核可校验**外部复核器落盘的具体数字**而非仅公式。
+
+**仍未完成的部分**：其一，上述区间是**输入不确定度**与**算术舍入**的联合包络，它认证的是"给定 CODATA 输入下的推导"，而非把 CODATA 调整本身重新证明一遍（trace 覆盖的是 $\alpha^2\mu_0$ 的区间传播这一步，$\alpha$、$\mu_0$ 输入球的上游合并不在其内）；其二，除法步在 trace 中以"精确有理端点相除"实现（分母为正故保序），Lean 内核未把该步也公理化（内核覆盖的是乘、平方与最终的整数判据）；其三，Lean 生态的认证浮点库 FloatLib 仍不成熟，尚未做到端到端核内重建全部算术。
 
 # 讨论
 
@@ -732,21 +753,34 @@ $$
 
 以下定理全部在 `G_dimension_lattice.lean` 中给出 Lean 4 证明（不依赖 Mathlib，仅用 `Int` 与 `omega`），经 `#print axioms` 核验无 `sorryAx`。
 
-| **Lean 名**                   | **对应正文** | **内容**                                                                |
-|:------------------------------|:-------------|:------------------------------------------------------------------------|
-| `dimMono_eq_zero_iff`         | §4.7(四)     | 单项式 $G^a\mu_0^c c^d\hbar^f e^g m^h$ 无量纲 $\iff$ 四条线性丢番图方程 |
-| `dimMono_param`               | §4.7(四)1    | 无量纲指数格秩 2，生成元 $\Pi_1$ 与 $\mu_0ce^2/\hbar=4\pi\alpha$        |
-| `no_dimensionless_G`          | §4.7(四)2    | 无质量标度（$h=0$）时 $a=0$：$G$ 不进入任何无量纲单项式                 |
-| `Pi1_dimensionless`           | §4.7(二)     | $\Pi_1 = Gm^2/(\hbar c)$ 无量纲（机器验证）                             |
-| `alpha_dimensionless`         | §4.7(四)3    | $\alpha=\mu_0ce^2/(4\pi\hbar)$ 无量纲（机器验证）                       |
-| `dimG_ne_dim_mu0`             | 定理 3       | $[G]\neq[\mu_0]=[\alpha^2\mu_0]$：SI 量纲矛盾可判定                     |
-| `cert_gap_pos`                | §4.8         | Arb 证书间距 $>0$（整数标度 $10^{-22}$）                                |
-| `alpha2mu0_gt_G_of_cert`      | §4.8         | 证书回放：$x\ge$ 下界 $\wedge$ $y\le$ 上界 $\Rightarrow x>y$            |
-| `gauss_alpha_dimensionless`   | 附录 E       | Gaussian 基下 $\alpha=e^2/(\hbar c)$ 无量纲（机器验证）                 |
-| `gauss_mu0_dimensionless`     | 附录 E       | Gaussian 基下 $\mu_0=1$ 无量纲（`rfl`，无公理）                         |
-| `gauss_dimG_ne_dim_alpha2mu0` | 附录 E       | Gaussian 基下 $[G]\neq[\alpha^2\mu_0]=0$：量纲不匹配仍成立              |
+| **Lean 名**                   | **对应正文** | **内容**                                                                                                                                           |
+|:------------------------------|:-------------|:---------------------------------------------------------------------------------------------------------------------------------------------------|
+| `dimMono_eq_zero_iff`         | §4.7(四)     | 单项式 $G^a\mu_0^c c^d\hbar^f e^g m^h$ 无量纲 $\iff$ 四条线性丢番图方程                                                                            |
+| `dimMono_param`               | §4.7(四)1    | 无量纲指数格秩 2，生成元 $\Pi_1$ 与 $\mu_0ce^2/\hbar=4\pi\alpha$                                                                                   |
+| `no_dimensionless_G`          | §4.7(四)2    | 无质量标度（$h=0$）时 $a=0$：$G$ 不进入任何无量纲单项式                                                                                            |
+| `Pi1_dimensionless`           | §4.7(二)     | $\Pi_1 = Gm^2/(\hbar c)$ 无量纲（机器验证）                                                                                                        |
+| `alpha_dimensionless`         | §4.7(四)3    | $\alpha=\mu_0ce^2/(4\pi\hbar)$ 无量纲（机器验证）                                                                                                  |
+| `dimG_ne_dim_mu0`             | 定理 3       | $[G]\neq[\mu_0]=[\alpha^2\mu_0]$：SI 量纲矛盾可判定                                                                                                |
+| `cert_gap_pos`                | §4.8         | Arb 证书间距 $>0$（整数标度 $10^{-22}$）                                                                                                           |
+| `alpha2mu0_gt_G_of_cert`      | §4.8         | 证书回放：$x\ge$ 下界 $\wedge$ $y\le$ 上界 $\Rightarrow x>y$                                                                                       |
+| `gauss_alpha_dimensionless`   | 附录 E       | Gaussian 基下 $\alpha=e^2/(\hbar c)$ 无量纲（机器验证）                                                                                            |
+| `gauss_mu0_dimensionless`     | 附录 E       | Gaussian 基下 $\mu_0=1$ 无量纲（`rfl`，无公理）                                                                                                    |
+| `gauss_dimG_ne_dim_alpha2mu0` | 附录 E       | Gaussian 基下 $[G]\neq[\alpha^2\mu_0]=0$：量纲不匹配仍成立                                                                                         |
+| `dimOf_mul` / `dimOf_inv`     | §4.7(五)     | 乘法/取逆的量纲（反）同态性，闭包律的种子                                                                                                          |
+| `dimensionless_mul_closed`    | §4.7(五)     | 闭包律 1：无量纲 $\times$ 无量纲 $=$ 无量纲                                                                                                        |
+| `dimensionless_inv_closed`    | §4.7(五)     | 闭包律 2：无量纲的逆无量纲（与 1 合成 $=$ 有理函数闭包）                                                                                           |
+| `dimensionless_npow_closed`   | §4.7(五)     | 闭包律 3：无量纲的自然数幂无量纲（归纳）                                                                                                           |
+| `dimensionless_zpow_closed`   | §4.7(五)     | 闭包律 4：无量纲的整数幂无量纲                                                                                                                     |
+| `transTy_spec`                | §4.7(五)     | 超越函数类型规则：有定义 $\iff$ 实参无量纲且输出无量纲                                                                                             |
+| `transTy_rejects_dimensional` | §4.7(五)     | 否定形式：任何非零量纲实参被拒                                                                                                                     |
+| `no_fractional_exponent`      | §4.7(五)     | 障碍：$2n=1$ 在 $\mathbb{Z}$ 上无解（分数指数出格）                                                                                                |
+| `Ival.mul_contains`           | §4.8         | 非负区间乘的健全性：$a\in x\wedge b\in y\Rightarrow ab\in x\!\cdot\!y$                                                                             |
+| `Ival.sq_contains`            | §4.8         | 平方健全性（乘法健全性特例）                                                                                                                       |
+| `q4_exact_gap`                | §4.8         | 整数判据 $2\cdot72973525632^3\!\cdot\!662607015\!\cdot\!10^{16}>667445\!\cdot\!10^{25}\!\cdot\!1602176634^2\!\cdot\!299792458$（`decide`，无公理） |
+| `q4_gt_of_bounds`             | §4.8         | 该整数区间上的回放引理（同 `alpha2mu0_gt_G_of_cert` 型）                                                                                           |
+| `q4_trace_endpoints_gap`      | §4.8         | 对 trace JSON 登记的 $10^{-64}$ 网格整数端点下结论（`decide`，无公理）                                                                             |
 
-形式化的**边界**须同时声明：上述结果是**单项式**（幂积）层面的不变量分类。把它推广到含超越函数的任意表达式，需要"量纲不变性对函数复合保持"这类额外假设，本文不作此推广，也不声称已机械化"任何形式的可能关系都不存在"。
+形式化的**边界**须同时声明：上述结果的**核心**仍是单项式（幂积）层面的不变量分类；§4.7(五) 把它沿"乘、逆、整数幂、保无量纲的超越映射"四个方向做了闭包扩张，从而覆盖单项式的有理函数与相应超越复合。**未覆盖**的部分已由两条障碍钉住（分数指数需 $\mathbb{Q}$、超越常数的数值超出 Lean core），本文因此不声称已机械化"任何表达式类的可能关系都不存在"。
 
 # 单位约定：Gaussian（非有理化 CGS）与 Heaviside–Lorentz 的归一化
 

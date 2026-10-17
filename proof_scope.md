@@ -1,7 +1,7 @@
 # 证明覆盖面声明（proof scope）
 
-配套论文：`G_alpha_squared_mu_zero_paper.tex`（34 页）
-声称登记表：`claims.yaml`（C1–C12）
+配套论文：`G_alpha_squared_mu_zero_paper.tex`（36 页）
+声称登记表：`claims.yaml`（C1–C14）
 形式化工件：`src/G_alpha_squared_mu_zero.lean`、`src/G_dimension_lattice.lean`
 数值工件：`results/*.json`
 
@@ -23,13 +23,20 @@
 | C11(MDL) | Λ≈α⁻¹ 的 MDL/描述长度先验（家族规模惩罚折进单一统计量） | `q7_mdl_prior.py` + `results/q7_mdl_prior.json` | 两段码：先验 ΔL=−2.50 bit（BF10=0.177，落在 O(1) 含糊区）；含选择 ΔL=−20.07 bit（BF10=9.1e-7，强支持事后选择）；B≥6 起即使不计选择也无法先验压缩 |
 | C12(GUT-RG) | 单圈 RGE + M_SUSY 阈值扫描：M_X 区间 vs M*c² | `q8_gut_running.py` + `results/q8_gut_running.json` | 数值验证（**仅 1 圈**）；M_X ∈ [4.96,14.10]×10¹⁵ GeV，阈值主导（张度 2.84 倍）远大于测量（0.95%）；M*c²=8.909×10¹⁶ GeV 高出全区间 6.3–17.9 倍，故"与 GUT 能标对应"不成立 |
 | C4(补充) | 同一均匀靶零模型的解析精确 p（覆盖测度 = 最近邻被估量的闭式） | 区间合并逐段求长（无 MC，dps=60 复核） | 数值验证；与 MC 在小数点后三位一致（差 0.17 倍标准误） |
+| C13 | 无量纲单项式的四条闭包律（乘/逆/自然数幂/整数幂 ⇒ 有理函数闭包）与超越函数类型规则 transTy | Lean `dimensionless_{mul,inv,npow,zpow}_closed`、`dimOf_mul`、`dimOf_inv`、`transTy_spec`、`transTy_rejects_dimensional`、`no_fractional_exponent` | 形式证明，**限"单项式经四则运算与整数幂复合、再经保无量纲超越映射"的有界表达式类** |
+| C14 | α²μ₀ 的定向舍入 trace（10⁻⁶⁴ 网格、8 步、含舍入方向标注）+ 独立精确有理数复核器；Lean 侧区间内核与精确整数判据 | `src/q9_arb_trace.py` → `results/q9_arb_trace.json`、`results/q9_arb_trace_check.json`（8/8）；Lean `Ival.mul_contains`、`Ival.sq_contains`、`q4_exact_gap`、`q4_gt_of_bounds`、`q4_trace_endpoints_gap` | trace 为数值/区间验证；`q4_exact_gap`、`q4_trace_endpoints_gap` 为**形式证明且不依赖任何公理** |
 
-Lean 全部定理经 `#print axioms` 逐条核验（2026-10-16 实测，`src/G_dimension_lattice.lean` 末尾打印九条）：`thm1_monoid` **不依赖任何公理**；`dimMono_eq_zero_iff`、`dimMono_param`、`Pi1_dimensionless`、`alpha_dimensionless`、`no_dimensionless_G` 依赖 `[propext, Classical.choice, Quot.sound]`；`dimG_ne_dim_mu0`、`cert_gap_pos`、`alpha2mu0_gt_G_of_cert` 依赖 `[propext, Quot.sound]`。九条均**无 `sorryAx`**。
+Lean 全部定理经 `#print axioms` 逐条核验（2026-10-17 复测，`src/G_dimension_lattice.lean` 末尾打印二十六条），按公理集分组如下，**二十六条均无 `sorryAx`**：
+
+- **不依赖任何公理（4 条）**：`thm1_monoid`；`gauss_mu0_dimensionless`（`rfl`）；`q4_exact_gap` 与 `q4_trace_endpoints_gap`（由 `decide` 在核内直接判定常量整数不等式）。
+- **仅 `[propext]`（2 条）**：`transTy_spec`；`transTy_rejects_dimensional`。
+- **`[propext, Classical.choice, Quot.sound]`（12 条）**：五条量纲判定链 `dimMono_eq_zero_iff`、`dimMono_param`、`Pi1_dimensionless`、`alpha_dimensionless`、`no_dimensionless_G`；Gaussian 的 `gauss_alpha_dimensionless`；§4.7(五) 的 `dimOf_mul`、`dimOf_inv` 与四条闭包律 `dimensionless_mul_closed`、`dimensionless_inv_closed`、`dimensionless_npow_closed`、`dimensionless_zpow_closed`。
+- **`[propext, Quot.sound]`（8 条）**：`dimG_ne_dim_mu0`、`gauss_dimG_ne_dim_alpha2mu0`、`cert_gap_pos`、`alpha2mu0_gt_G_of_cert`、`no_fractional_exponent`，以及 §4.8 的区间内核 `Ival.mul_contains`、`Ival.sq_contains`、`q4_gt_of_bounds`。
 
 ## 未覆盖内容与缺口
 
-1. **C8 的端点来历**：Arb 区间由 Lean 之外的库按定向舍入算出，Lean 内只回放"单调比较"，未重放 Arb 的运算步骤，也未导出区间依赖图。
-2. **任意表达式类的量纲不变性**：C7 只覆盖单项式。含超越函数（如 sin、exp）的表达式在函数复合下是否保持量纲，未形式化，本文也不声称已机械化"任何形式的可能关系都不存在"。
+1. **C8/C14 的端点来历**：Arb 区间由 Lean 之外的库按定向舍入算出，Lean 内只回放"单调比较"（`cert_gap_pos`/`alpha2mu0_gt_G_of_cert`）与"给定 trace 端点 ⇒ 结论"（`q4_trace_endpoints_gap`），**未**重放 Arb 的运算步骤，也**未**导出区间依赖图。C14 补上的是"运算步骤可复核"（机器可读 trace + 独立精确有理数复核器 + Lean 区间内核），不是"Arb 的依赖图已导出"。另：trace 中的除法步以"精确有理端点相除"实现（分母为正故保序），Lean 内核未把该步公理化。
+2. **任意表达式类的量纲不变性**：C7 只覆盖单项式；C13 把证据范围扩到"单项式经四则运算与整数幂复合、再经保无量纲超越映射"的**有界**表达式类（四条闭包律 + 超越函数类型规则）。两类障碍已在机器上定位且**未**消除：**分数指数**（如 √α）需 ℚ，整数指数格容纳不下（`no_fractional_exponent` 把 ½∉ℤ 化为 `2n=1` 在 ℤ 上无解）；**超越常数的数值内容**（π、e 的十进制展开）超出 Lean core，交由区间算术承担。故本文**不**声称已机械化"任何形式的可能关系都不存在"。
 3. **μ₀ 量纲重诠释的物理可接受性**：属物理论证，不在形式化范围内（定理 3 的"需重新诠释"部分因此只是解析论证）。
 4. **CODATA 调整本身**：本文认证的是"给定 CODATA 输入下的推导"，未重新证明 CODATA 的数据合并过程。
 5. **定理 4 的家族边界**：穷举与零模型的结论依赖人为指定的家族（整数系数、π 的 ≤3 次、|aᵢ|≤10）与均匀随机靶；未给出与家族无关的先验框架。

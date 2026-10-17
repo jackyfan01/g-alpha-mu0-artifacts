@@ -1,0 +1,46 @@
+{
+ "all_ok": true,
+ "n_checks": 8,
+ "checks": [
+  {
+   "step": "alpha_sq",
+   "ok": true,
+   "detail": "α² 舍入区间包含精确端点平方"
+  },
+  {
+   "step": "alpha_cu",
+   "ok": true,
+   "detail": "α³ 端点单调相乘且舍入向外"
+  },
+  {
+   "step": "num",
+   "ok": true,
+   "detail": "num 端点相乘且舍入向外"
+  },
+  {
+   "step": "den",
+   "ok": true,
+   "detail": "den 为精确量，舍入网格不收紧"
+  },
+  {
+   "step": "a2mu0",
+   "ok": true,
+   "detail": "α²μ₀ 除法端点（den>0 保序）且舍入向外"
+  },
+  {
+   "step": "gap_positive",
+   "ok": true,
+   "detail": "最终间隙 gap = (α²μ₀)_lo − G_hi > 0"
+  },
+  {
+   "step": "independent_path",
+   "ok": true,
+   "detail": "独立路径（α 直算，不经中间登记值）落在登记区间内：reg_lo ≤ exact_lo ≤ exact_hi ≤ reg_hi"
+  },
+  {
+   "step": "overall",
+   "ok": true,
+   "detail": "全部回放断言通过"
+  }
+ ]
+}
