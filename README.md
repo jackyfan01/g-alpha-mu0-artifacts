@@ -13,7 +13,7 @@ conda env create -f environment.yml && conda activate galpha-mu0
 #   或
 pip install -r requirements.txt
 
-# 2) 数值验证（在 src/ 目录下运行，结果 JSON 落在当前目录）
+# 2) 数值验证（可在任意目录运行，结果 JSON 固定落在仓库的 results/）
 cd src
 python verify_numerical.py        # 论文全部数值断言的独立重算（mpmath, dps=30）
 python R3_lambda_search.py        # Lambda 全族穷举（194,480 个 pi 多项式）
@@ -28,7 +28,11 @@ python q7_mdl_prior.py            # MDL/描述长度先验：家族规模惩罚�
 python q8_gut_running.py          # 单圈 RGE + M_SUSY 阈值扫描：M_X 区间 vs M*c²（§4.5/§5.5）
 python q9_arb_trace.py            # α²μ₀ 的定向舍入 trace（10⁻⁶⁴ 网格，含方向标注）+ 独立精确有理数复核器（§4.8）
 
-# 3) Lean 4 验证（无需 mathlib）
+# 3) 统一复算入口：逐条重放 claims.yaml 的 C1-C14，末行打印 VERDICT（Stage 4.8 / K9）
+cd ..
+python src/replay_claims.py
+
+# 4) Lean 4 验证（无需 mathlib）
 lean src/G_alpha_squared_mu_zero.lean    # 打印 6 项判定，全部 PASS
 lean src/G_dimension_lattice.lean        # 量纲格定理 + 证书回放，并打印 axioms 自检
 ```
@@ -67,7 +71,7 @@ arXiv:2409.03787）：
 ```
 src/
   G_alpha_squared_mu_zero.lean   Lean 4：定理1形式证明 + 定理2/4/5/6数值检查
-  G_dimension_lattice.lean       Lean 4：量纲格不变量分类 + 闭包律/超越函数类型规则 + Arb 证书回放与区间内核（无 Mathlib，26 条定理）
+  G_dimension_lattice.lean       Lean 4：量纲格不变量分类 + 闭包律/超越函数类型规则 + Arb 证书回放与区间内核（无 Mathlib，27 条定理/引理，其中 26 条在 #print axioms 清单内）
   verify_numerical.py            论文全部数值断言的独立重算
   R3_lambda_search.py            Lambda 全族穷举（定理4）
   q2_lambda_null_model.py        零模型显著性检验（定理 4：事后选择偏差）
