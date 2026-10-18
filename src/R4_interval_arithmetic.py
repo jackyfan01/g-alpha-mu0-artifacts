@@ -10,6 +10,7 @@
 
 常数：CODATA 2022。用法：python R4_interval_arithmetic.py
 """
+from pathlib import Path
 import json
 from mpmath import mp, mpf, mpi, pi, fabs
 
@@ -41,5 +42,5 @@ out = {
               "结论：区间不相交 ⇒ 偏差为严格事实，非测量不确定度所致。",
 }
 print(json.dumps(out, ensure_ascii=False, indent=2))
-with open("mpi_crosscheck.json", "w", encoding="utf-8") as f:
+with open(str(Path(__file__).resolve().parent.parent / "results" / "mpi_crosscheck.json"), "w", encoding="utf-8") as f:
     json.dump(out, f, ensure_ascii=False, indent=2)

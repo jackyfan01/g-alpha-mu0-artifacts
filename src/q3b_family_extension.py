@@ -15,6 +15,7 @@ Lambda 还是最优吗？"不显著"的结论会不会翻转？
 用法: python q3b_family_extension.py
 输出: stdout + q3b_family_extension_results.json
 """
+from pathlib import Path
 import json
 import numpy as np
 from mpmath import mp, mpf, pi, fabs
@@ -126,7 +127,7 @@ def main():
                       "p 均远大于 0.05，Lambda 型构造的吻合始终不构成统计证据。"),
     }
     print(json.dumps(out["verdict"], ensure_ascii=False, indent=2))
-    with open("q3b_family_extension_results.json", "w", encoding="utf-8") as f:
+    with open(str(Path(__file__).resolve().parent.parent / "results" / "q3b_family_extension_results.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2, ensure_ascii=False)
 
 

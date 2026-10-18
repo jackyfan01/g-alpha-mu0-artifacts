@@ -11,6 +11,7 @@ P(π) = a₀ + a₁π + a₂π² + a₃π³，统计其逼近 α⁻¹ 的相对�
 用法：python R3_lambda_search.py
 输出：stdout 统计 + results.json
 """
+from pathlib import Path
 import json
 from mpmath import mp, mpf, pi, fabs
 
@@ -72,7 +73,7 @@ def main():
                 "吻合不具备统计显著性。",
     }
     print(json.dumps(out, ensure_ascii=False, indent=2, default=float))
-    with open("lambda_enumeration.json", "w", encoding="utf-8") as f:
+    with open(str(Path(__file__).resolve().parent.parent / "results" / "lambda_enumeration.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2, default=float)
 
 

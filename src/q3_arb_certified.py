@@ -13,6 +13,7 @@
 用法: python q3_arb_certified.py
 输出: stdout + q3_arb_results.json
 """
+from pathlib import Path
 import json
 from flint import arb, ctx
 
@@ -90,5 +91,5 @@ OUT["Mstar_GeV"] = str(Mstar_GeV)
 OUT["Mstar_GeV_interval"] = [lo(Mstar_GeV), hi(Mstar_GeV)]
 
 print(json.dumps(OUT, indent=2, ensure_ascii=False))
-with open("q3_arb_results.json", "w", encoding="utf-8") as f:
+with open(str(Path(__file__).resolve().parent.parent / "results" / "q3_arb_results.json"), "w", encoding="utf-8") as f:
     json.dump(OUT, f, indent=2, ensure_ascii=False)

@@ -19,6 +19,7 @@
 用法: python q2_lambda_null_model.py
 输出: stdout + q2_lambda_null_results.json
 """
+from pathlib import Path
 import json
 import numpy as np
 from mpmath import mp, mpf, pi, fabs
@@ -140,7 +141,7 @@ def main():
     }
 
     print(json.dumps(out, indent=2, ensure_ascii=False))
-    with open("q2_lambda_null_results.json", "w", encoding="utf-8") as f:
+    with open(str(Path(__file__).resolve().parent.parent / "results" / "q2_lambda_null_results.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2, ensure_ascii=False)
 
 
