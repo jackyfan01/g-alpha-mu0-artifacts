@@ -42,3 +42,19 @@
 - 2026-10-16 修复 精简送审版的**节边界计算错误**：drop_title 删 subsection 时把边界取在“下一个 subsection”，于是从 §5.5 一直吃到下一个 subsection，连带吃掉了夹在中间的 \section{结论} 标题与结论首段。已提交的第一版精简版（13 页）因此**没有结论节**（缺陷件留档 .pipeline/revision/brief15_submitted_defective.*.bak 可复查）。修法：subsection 的边界取“下一个任意标题”，section 的边界才只认 \section；同时新增 check_headings 守卫——凡未被 --drop-title 点名的标题，其标题命令原文必须仍在精简版中，否则判 FAIL（阳性对照已跑：对缺陷件它准确报出「结论」）。重生成后 14 页 / 0 error / 0 overfull / 0 缺字形 / 标题守卫通过 / 7 项 must-keep 全命中；另用逐行回读证明“只删未改”：精简版 449 个正文行全部逐字见于完整版，11 个消失的高精度数全部位于删节或附录内。
 - 2026-10-17 新增 §4.7(五) 闭包性与超越函数类型规则（Q2）与 §4.8 定向舍入 trace + Lean 区间内核（Q4），答复第七轮外审 Q2/Q4：Q2 侧新增 4 条闭包律（`dimensionless_{mul,inv,npow,zpow}_closed`）、超越函数类型规则（`transTy_spec` / `transTy_rejects_dimensional`）与可达边界（`no_fractional_exponent`，分数指数需 ℚ）；Q4 侧给出 `q9_arb_trace.py` 导出的 10⁻⁶⁴ 定向舍入 trace（8 步、独立 Fraction 复核器 8/8、Arb 交叉核对）与 Lean 内 `Ival` 区间内核（`q4_exact_gap` / `q4_trace_endpoints_gap`，纯整数比值不等式由 `decide` 零公理判定），并登记“未重放 Arb 运算步骤”“除法步未公理化”两条缺口。`G_dimension_lattice.lean` 由 13 条增至 27 条定理/引理（其中 26 条在 `#print axioms` 清单内，均无 `sorryAx`），全文升至 36 页、精简件 15 页，均 0 error / 0 overfull / 0 缺字形。`claims.yaml` 增 C13（Q2）/C14（Q4），并修正 C7 的公理清单笔误（`no_dimensionless_G` 实为 `[propext, Classical.choice, Quot.sound]`）；README / proof_scope.md / proof_trace.md 同步。
 - 2026-10-17 修复 送审精简件与完整版**内容已分叉**（违反“只删未改”）：自查发现精简件沿用旧版 §4.8 CODATA 对照表（7 列）与若干段落，而完整版已更新（8 列、含 u_r(G)），逐行回读有 20 行不见于完整版（缺陷件留档 `G_alpha_squared_mu_zero_paper_brief15.stale-20261017.bak.tex` 可复查）。改用 `make_review_brief.py` 从当前完整版**重新生成**精简件（删目录、参考文献后附录、讨论中三节；版式 12pt→10pt、边距 2.5cm→9mm），逐行回读 528 行全部逐字见于完整版（0 缺失；同一检查器对旧缺陷件准确报出 20 行缺失，阳性对照已跑），标题守卫与 6 项 must-keep 全过，15 页 / 0 error / 0 overfull / 0 缺字形。
+
+- 2026-10-18 新增 `G_alpha_mu0_repo/src/replay_claims.py`，把 C1–C9 由"登记表自述 pass"改为
+  可当场复算：数值用 arb 从 CODATA 2022 独立复算并与**论文正文抠出的数字**对照（md/tex 必须
+  抠到同一个数），Lean 侧真跑 `lake build` 与附录 D 分桶逐条对照，MC 类（零模型 p）明确降级为
+  台账一致性。门控 `proof_deliverables_gate.py` 于本目录 FAIL=0 / WARN=0。
+- 2026-10-18 修复 本主题 `claims.yaml` 的 C7 公理清单：登记 `[propext, Quot.sound]` 与实测
+  `#print axioms`（`no_dimensionless_G` 实为 `[propext, Classical.choice, Quot.sound]`）不符，
+  已按实测改正；仓库副本 10-17 已改、主题副本漏改，此事同时暴露两份登记表分叉（见 proof_scope）。
+- 2026-10-18 修复 `replay_claims.py` 自身两处：`--claim` 路径 `str.startswith(list)` TypeError
+  导致每条 claim 复算都崩（变异审计才发现，正向跑不暴露）；C6 正则锚点原会命中正文中位数更短的
+  1.000004，改为要求跟随 `\pm`。
+- 2026-10-18 补入归档标识符：§3 可得性段与局限性 (vi) 由"DOI 待归档后补入"改为引用 Zenodo
+  概念 DOI `10.5281/zenodo.23451086`（版本 DOI `10.5281/zenodo.23451087`）。LIMITATION (vi)
+  的口径同时收紧——不再说"尚无公开仓库与 DOI"，改为承认残余限制是"DOI 钉住发布时刻的快照，
+  后续修订须另发版本"。完整版 36 页、精简件 15 页，均 0 error / 0 overfull / 0 缺字形；
+  tex2md 覆盖与结构校验通过，Stage 4.8 门控 FAIL=0 WARN=0。
