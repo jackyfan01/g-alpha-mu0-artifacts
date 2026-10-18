@@ -3,7 +3,6 @@ message: "If you reuse the artifacts of this study, please cite the software rep
 title: "Artifacts for the Lean 4 assisted audit of the claim G = alpha^2 mu_0"
 authors:
   - name: "jackyfan01"
-    type: person
 date-released: "2026-10-18"
 repository-code: "https://github.com/jackyfan01/g-alpha-mu0-artifacts"
 license:
