@@ -5,9 +5,7 @@ authors:
   - name: "jackyfan01"
 date-released: "2026-10-18"
 repository-code: "https://github.com/jackyfan01/g-alpha-mu0-artifacts"
-license:
-  - MIT
-  - CC-BY-4.0
+license: CC-BY-4.0
 keywords:
   - Lean 4
   - certified interval arithmetic
