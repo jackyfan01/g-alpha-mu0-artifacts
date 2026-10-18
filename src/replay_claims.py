@@ -14,7 +14,7 @@
     并在明细里写明它只证一致、不证复算。
 
 用法:
-  python replay_claims.py                # 全量（20 项检查）
+  python replay_claims.py                # 全量（C1-C14）
   python replay_claims.py --claim C4     # 只跑 C4 对应检查（门控按 claim 复算）
 """
 import io
@@ -49,14 +49,14 @@ PAPER_TEX = _pick("G_alpha_squared_mu_zero_paper.tex")
 
 # 每条 claim 对应哪些检查前缀（一处笔误不该把全篇判红）。
 # 检查 id 一律以 claim 号开头，跳过判定就只看这一条前缀，不易误伤。
-CLAIM_CHECKS = {c: [c] for c in ("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9")}
+CLAIMS = tuple(f"C{i}" for i in range(1, 15))
 SELECT = None
 CLAIM_ID = None
 argv = sys.argv[1:]
 if "--claim" in argv:
     CLAIM_ID = argv[argv.index("--claim") + 1]
-    if CLAIM_ID not in CLAIM_CHECKS:
-        print(f"VERDICT: FAIL 未知 claim {CLAIM_ID}（可选 {sorted(CLAIM_CHECKS)}）")
+    if CLAIM_ID not in CLAIMS:
+        print(f"VERDICT: FAIL 未知 claim {CLAIM_ID}（可选 {list(CLAIMS)}）")
         raise SystemExit(2)
     SELECT = (CLAIM_ID,)      # 必须是 tuple：str.startswith 不接受 list，传 list 会直接 TypeError
 
@@ -65,7 +65,8 @@ fails = []
 
 
 def check(cid, ok, detail):
-    if SELECT is not None and not cid.startswith(SELECT):
+    # 按首个 token 精确匹配：startswith 会让 --claim C1 把 C10-C14 一起跑掉。
+    if SELECT is not None and cid.split(" ", 1)[0] != SELECT[0]:
         print(f"CHECK {cid} SKIP")
         return True
     out[cid] = {"pass": bool(ok), "detail": detail}
@@ -105,6 +106,30 @@ def in_ball(ball, value, half):
     tol = arb(half) + arb(str(ball.rad()))
     ok = abs(ball.mid() - arb(value)) <= tol
     return ok, f"实算={ball.str(16)} 判定容差=±{half}"
+
+
+def regen_check(cid, script, artifacts, note):
+    """重跑生成器，与已提交工件逐字节比对（不拿工件给自己作证）。
+
+    先留原件字节；不一致时写回，避免门控跑一次就把历史工件改掉。
+    """
+    paths = [REPO / a for a in artifacts]
+    before = {p: (p.read_bytes() if p.exists() else None) for p in paths}
+    proc = subprocess.run([sys.executable, str(HERE / script)], cwd=str(HERE),
+                          capture_output=True, text=True, encoding="utf-8", timeout=600)
+    changed = []
+    for p in paths:
+        after = p.read_bytes() if p.exists() else None
+        if after != before[p]:
+            changed.append(p.name)
+            if before[p] is not None:
+                p.write_bytes(before[p])
+    missing = [p.name for p in paths if before[p] is None]
+    same = len(paths) - len(changed) - len(missing)
+    check(f"{cid} 再生成一致", proc.returncode == 0 and not changed and not missing,
+          f"{script} exit={proc.returncode}；逐字节一致 {same}/{len(paths)}"
+          + (f"；不一致（已写回原件）{changed}" if changed else "")
+          + (f"；缺工件 {missing}" if missing else "") + f"；{note}")
 
 
 # ── CODATA 2022 输入球（与 q3_arb_certified.py 同一常数源，另行书写以便交叉）────
@@ -193,9 +218,26 @@ else:
           f"台账 p={p_ledger}，论文写 {lit}（md={md.count(lit)}/tex={tex.count(lit)} 次）；"
           "此项只证论文与台账一致，194480 项枚举 + 种子 MC 不在此复算")
 
+# ── C10-C12/C14：重跑生成器，与已提交工件逐字节比对 ─────────────────────────
+REGEN = {
+    "C10": ("q6_codata_history.py", ["results/q6_codata_history.json"],
+            "四版 CODATA 输入球下的区间与间距轨迹"),
+    "C11": ("q7_mdl_prior.py", ["results/q7_mdl_prior.json"],
+            "MDL/描述长度先验"),
+    "C12": ("q8_gut_running.py", ["results/q8_gut_running.json"],
+            "1 圈 RGE + M_SUSY 阈值扫描"),
+    "C14": ("q9_arb_trace.py", ["results/q9_arb_trace.json", "results/q9_arb_trace_check.json"],
+            "定向舍入 trace + 独立精确有理复核器"),
+}
+for cid_r, (script, arts, note) in REGEN.items():
+    if SELECT is not None and cid_r != SELECT[0]:
+        continue
+    regen_check(cid_r, script, arts, note)
+
 # ── Lean：真跑 lake build，与论文附录 D 分桶逐条对照 ───────────────────────────
 BUILD = {}
-if SELECT is None or SELECT and SELECT[0] in ("C1", "C3", "C7"):
+LEAN_CLAIMS = ("C1", "C3", "C7", "C13", "C14")
+if SELECT is None or SELECT[0] in LEAN_CLAIMS:
     proc = subprocess.run(["lake", "build"], cwd=str(REPO), capture_output=True,
                           text=True, encoding="utf-8", timeout=900)
     BUILD = {"exit": proc.returncode,
@@ -221,6 +263,15 @@ def build_axiom_map(text):
     return got
 
 
+def expand_braces(tok):
+    """把 `dimensionless_{mul,inv,npow,zpow}_closed` 这类缩写展开成四个名字。"""
+    m = re.search(r"\{([^{}]*)\}", tok)
+    if not m:
+        return [tok]
+    return [x for part in m.group(1).split(",")
+            for x in expand_braces(tok[:m.start()] + part.strip() + tok[m.end():])]
+
+
 def paper_axiom_buckets(md_text):
     """附录 D 的分桶行 → {声明: 期望公理集}；只认 build 真报过的名字。"""
     bucket = re.compile(r"^(?:-\s+|\*\s+).*(不依赖任何公理|仅依赖\s*`([^`]+)`|依赖\s*`([^`]+)`)")
@@ -231,29 +282,43 @@ def paper_axiom_buckets(md_text):
             continue
         want = "NONE" if m.group(1) == "不依赖任何公理" else norm_axioms(m.group(2) or m.group(3) or "")
         for tok in re.findall(r"`([^`]+)`", ln):
-            if "{" in tok or tok.startswith("[") or tok.startswith("\\"):
+            if tok.startswith("[") or tok.startswith("\\"):
                 continue
-            emap[tok] = want
+            for name in expand_braces(tok):
+                emap[name] = want
     return emap
 
 
-LEAN_DECL = {"C1": "thm1_monoid", "C3": "dimG_ne_dim_mu0", "C7": "no_dimensionless_G"}
-for cid_exp, decl in LEAN_DECL.items():
-    if SELECT is not None and not cid_exp.startswith(SELECT):
+LEAN_DECL = {
+    "C1": ["thm1_monoid"],
+    "C3": ["dimG_ne_dim_mu0"],
+    "C7": ["no_dimensionless_G"],
+    "C13": ["dimensionless_mul_closed", "dimensionless_inv_closed", "dimensionless_npow_closed",
+            "dimensionless_zpow_closed", "dimOf_mul", "dimOf_inv", "transTy_spec",
+            "transTy_rejects_dimensional", "no_fractional_exponent"],
+    "C14": ["Ival.mul_contains", "Ival.sq_contains", "q4_exact_gap", "q4_gt_of_bounds",
+            "q4_trace_endpoints_gap"],
+}
+for cid_exp, decls in LEAN_DECL.items():
+    if SELECT is not None and cid_exp != SELECT[0]:
         continue
     if "text" not in BUILD:
         check(f"{cid_exp} 公理依赖", False, "本轮未跑 lake build（SELECT 与 build 未同开，属脚本 bug）")
         continue
     got_all = build_axiom_map(BUILD["text"])
     want_all = paper_axiom_buckets(md)
-    if decl not in got_all:
-        check(f"{cid_exp} 公理依赖", False, f"lake build 输出里没有 {decl} 的 #print axioms 行")
-        continue
-    if decl not in want_all:
-        check(f"{cid_exp} 公理依赖", False, f"附录 D 未给 {decl} 分桶（实测 {got_all[decl]}）")
-        continue
-    check(f"{cid_exp} 公理依赖", got_all[decl] == want_all[decl],
-          f"{decl} 实测={got_all[decl]}；论文附录 D={want_all[decl]}")
+    missing_build = [d for d in decls if d not in got_all]
+    missing_paper = [d for d in decls if d not in want_all]
+    mismatch = [f"{d}: 实测={got_all[d]} ≠ 附录D={want_all[d]}"
+                for d in decls if d in got_all and d in want_all and got_all[d] != want_all[d]]
+    ok = not (missing_build or missing_paper or mismatch)
+    if len(decls) == 1:
+        d = decls[0]
+        detail = f"{d} 实测={got_all.get(d, '缺')}；论文附录 D={want_all.get(d, '缺')}"
+    else:
+        detail = (f"{len(decls)} 条声明；build 缺 {missing_build or '无'}；"
+                  f"附录 D 缺 {missing_paper or '无'}；分歧 {mismatch or '无'}")
+    check(f"{cid_exp} 公理依赖", ok, detail)
 
 if SELECT is None and BUILD:
     got_all = build_axiom_map(BUILD["text"])

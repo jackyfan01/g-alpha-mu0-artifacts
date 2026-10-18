@@ -18,9 +18,10 @@ claims:
       type: lean4
       declaration: "thm1_monoid"
       role: main
-      result: pass@2026-10-15
+      result: pass@2026-10-18
       statement_check: "approved@2026-10-15 by 作者复核（Lean 陈述与正文逐字一致）"
       artifact: src/G_dimension_lattice.lean
+      run: python src/replay_claims.py --claim C1
       notes: "#print axioms thm1_monoid → does not depend on any axioms"
 
   - id: C2
@@ -30,8 +31,9 @@ claims:
     verification:
       type: mpmath_recompute
       role: main
-      result: pass@2026-10-15
+      result: pass@2026-10-18
       artifact: src/verify_numerical.py
+      run: python src/replay_claims.py --claim C2
       notes: "Lean Float 与 mpmath(dps=50) 双通道；阈值 0.27% 仅为通过性判据，不承载证据强度"
 
   - id: C3
@@ -42,9 +44,10 @@ claims:
       type: lean4
       declaration: "dimG_ne_dim_mu0"
       role: supporting
-      result: pass@2026-10-15
+      result: pass@2026-10-18
       statement_check: "approved@2026-10-15 by 作者复核"
       artifact: src/G_dimension_lattice.lean
+      run: python src/replay_claims.py --claim C3
       notes: "量纲向量化为 SI 四基本量纲整数指数；解析推导另见 §4.3"
 
   - id: C4
@@ -54,8 +57,9 @@ claims:
     verification:
       type: numeric_recompute
       role: main
-      result: pass@2026-10-15
+      result: pass@2026-10-18
       artifact: results/lambda_enumeration.json
+      run: python src/replay_claims.py --claim C4
       notes: "零模型口径见 results/q2_lambda_null_results.json（种子 20261014，可逐位重跑）；p 随家族边界双向漂移 0.011-0.73，非内禀量；同日追加的解析精确 p（区间合并逐段求长，无 MC）为 0.0111/0.0198/0.0322/0.0698/0.1270（dps=60 复核到 1e-14），与 MC 0.12708 是小数点后三位一致 (差 9.2e-5 = 0.17 倍 MC 标准误)；注意均匀靶本身已按 Voronoi 胞宽加权，解析值与 MC 是同一被估量的两种算法；对称 min(2d,w)/R 是错误近似（给 0.1310，本家族 17.15% 间距 < 2d）；0.729 属另一口径（[100,200] 窗口 MC，q3b 种子 20261015），不与本曲线串联；跨 K=5 取最小 p 的 Bonferroni = 0.0555，因家族嵌套只能当敏感性指标，不作频率学 p 值"
 
   - id: C5
@@ -65,8 +69,9 @@ claims:
     verification:
       type: numeric_recompute
       role: supporting
-      result: pass@2026-10-15
+      result: pass@2026-10-18
       artifact: results/q3_arb_results.json
+      run: python src/replay_claims.py --claim C5
       notes: "Arb 认证区间 [8.9091,8.9093]×10¹⁶ GeV；'与 GUT 能标对应'一句的靶值模型依赖性已改为实算，见 C12（results/q8_gut_running.json），旧表 2 的文献量级估计已废止"
 
   - id: C6
@@ -76,8 +81,9 @@ claims:
     verification:
       type: numeric_recompute
       role: supporting
-      result: pass@2026-10-15
+      result: pass@2026-10-18
       artifact: results/q3_arb_results.json
+      run: python src/replay_claims.py --claim C6
       notes: "α²Λ²=1.000004446±7.8×10⁻¹⁰，认证不含 1"
 
   - id: C7
@@ -88,9 +94,10 @@ claims:
       type: lean4
       declaration: "no_dimensionless_G"
       role: main
-      result: pass@2026-10-15
+      result: pass@2026-10-18
       statement_check: "approved@2026-10-15 by 作者复核（Lean 陈述即'指数 h=0 ⇒ a=0'）"
       artifact: src/G_dimension_lattice.lean
+      run: python src/replay_claims.py --claim C7
       notes: "配套 dimMono_param / Pi1_dimensionless / alpha_dimensionless；四条同属 [propext, Classical.choice, Quot.sound] 组（2026-10-17 复核：先前在本字段误记为 [propext, Quot.sound]，已改正；同一值见 lean 输出与 proof_scope.md）"
 
   - id: C8
@@ -100,8 +107,9 @@ claims:
     verification:
       type: numeric_recompute
       role: main
-      result: pass@2026-10-16
+      result: pass@2026-10-18
       artifact: results/q3_arb_results.json
+      run: python src/replay_claims.py --claim C8
       notes: "disjoint 由 Arb 原生 overlaps() 判定；证书回放在 Lean 中为 cert_gap_pos + alpha2mu0_gt_G_of_cert；第二枚完全相关证书见 results/q5_correlated_and_spacing.json（u_r=4.5222e-10、间距 115.42 u(G)、sigma=116.42）；独立球口径 4.6063e-10 只宽 1.86%，实测把 mu0 端球换成传递半径 1.89428e-16 后独立 trace 给 4.52199e-10，与完全相关的 4.52226e-10 只差 0.006%，故 1.86% 里 1.85% 来自 CODATA 把 u(mu0) 向上舍入展示成 (20)；alpha 端球口径压力测试见 results/q5b_alpha_ball_nist_caliber.json（u(alpha)=1.10/1.132/1.168e-12 -> u_r=4.52/4.66/4.80e-10，三档均 disjoint，间距均 115.42 u(G))"
 
   - id: C9
@@ -111,8 +119,9 @@ claims:
     verification:
       type: numeric_recompute
       role: supporting
-      result: pass@2026-10-15
+      result: pass@2026-10-18
       artifact: results/q3_arb_results.json
+      run: python src/replay_claims.py --claim C9
       notes: "Λ−α⁻¹=3.046×10⁻⁴±2.24×10⁻⁸（不含 0）；(三) 仅限 |p|,|q|≤3，全域属未解丢番图问题"
 
   - id: C10
@@ -122,8 +131,9 @@ claims:
     verification:
       type: numeric_recompute
       role: supporting
-      result: pass@2026-10-17
+      result: pass@2026-10-18
       artifact: results/q6_codata_history.json
+      run: python src/replay_claims.py --claim C10
       notes: "旧 SI(2010/2014) mu0 为定义值 4*pi*1e-7（零不确定度），alpha^2*mu0 不确定度仅来自 alpha；新 SI(2018/2022) 用完全相关 trace 2*alpha^3*h/(e^2 c)。反向求解：G 中心须上移 2616 ppm（116 倍当前 u(G)）才重合，或中心不动须把 u(G) 撑到 2616 ppm（=1.74 倍 1998 峰值 1500 ppm）；即使 u_r(G) 退回 1998 峰值，认证口径下仍不相交（间距 0.74 u(G)>0）。原始数值取自 NIST 归档 ASCII 表 physics.nist.gov/cuu/Constants/ArchiveASCII/allascii_YYYY.txt"
 
   - id: C11
@@ -133,8 +143,9 @@ claims:
     verification:
       type: numeric_recompute
       role: supporting
-      result: pass@2026-10-17
+      result: pass@2026-10-18
       artifact: results/q7_mdl_prior.json
+      run: python src/replay_claims.py --claim C11
       notes: "两段码 L0=log2(1/eps)=25.53 bit (eps=u(alpha^{-1})=2.066e-8)；L_p=3*log2(21)=13.18 bit（最偏袒 H1 的 3 非零系数读法）；残差 log2(2*d_obs/eps)=14.85 bit；先验 ΔL=log2(1/(2*d_obs))-L_p=-2.50 bit (BF10=0.177)；含选择 L_p^eff=L_p+log2(194480)=30.75 -> ΔL=-20.07 bit (BF10=9.1e-7)；B_crit=5.40；盈亏平衡 d<5.40e-5（先验）/ d<2.78e-10（含选择），实测 d_obs=3.046e-4 分别大 5.6 倍 / 1.1e6 倍"
 
   - id: C12
@@ -144,8 +155,9 @@ claims:
     verification:
       type: numeric_recompute
       role: supporting
-      result: pass@2026-10-17
+      result: pass@2026-10-18
       artifact: results/q8_gut_running.json
+      run: python src/replay_claims.py --claim C12
       notes: "M_Z 输入 PDG 口径：α_em^{-1}(M_Z)=127.952±0.009、sin²θ_W=0.23122±0.00004、α_s(M_Z)=0.1179±0.0009；规范化 α_1^{-1}=(3/5)cos²θ_W α_em^{-1}=59.020、α_2^{-1}=sin²θ_W α_em^{-1}=29.585、α_3^{-1}=8.4818；b_SM=(41/10,-19/6,-7)、b_MSSM=(33/5,1,-3)；M_SUSY 扫描 0.3/1/2.8/10 TeV -> M_X=1.4095/0.9850/0.7251/0.4964×10¹⁶ GeV，α_GUT^{-1}=25.17/26.03/26.76/27.67，a3-a1=-0.335/-0.595/-0.818/-1.093；M*c²/M_X=6.32-17.95（M*c² 落在扫描区间之外）。SM-only 非 SUSY 情形 α_1,α_2 交于 1.031×10¹³ GeV 但 α_3 在交点偏差 -5.58，不统一。诚实边界：仅 1 圈；M_X 非可观测量、结论只依赖量级与模型依赖性；2 圈对照 Bourilkov 2015（arXiv:1503.01756，M_SUSY≈2.8 TeV 处 M_GUT=1.05±0.07×10¹⁶）把 1 圈值抬高约 40%，仍使 M*c² ≈8.5 倍高于区间"
 
   - id: C13
@@ -156,9 +168,10 @@ claims:
       type: lean4
       declaration: "dimensionless_mul_closed, dimensionless_inv_closed, dimensionless_npow_closed, dimensionless_zpow_closed, dimOf_mul, dimOf_inv, transTy_spec, transTy_rejects_dimensional, no_fractional_exponent"
       role: supporting
-      result: pass@2026-10-17
+      result: pass@2026-10-18
       statement_check: "approved@2026-10-17 by 作者复核"
       artifact: src/G_dimension_lattice.lean
+      run: python src/replay_claims.py --claim C13
       notes: "把 C7 的否定结论从单项式扩到'单项式经四则运算与整数幂复合、再经保无量纲超越映射'的有界表达式类。公理分布：四条闭包律 + dimOf_mul/dimOf_inv 属 [propext, Classical.choice, Quot.sound] 组；transTy_spec/transTy_rejects_dimensional 仅 [propext]；no_fractional_exponent 属 [propext, Quot.sound] 组。两条机器定位的边界：分数指数需 ℚ（故 no_fractional_exponent 把 1/2 ∉ ℤ 化为'2n=1 在 ℤ 上无解'）；超越常数的数值内容超出 Lean core（交由 C14 的区间算术承担）。仍**不**声称已机械化任意表达式类的不可能性"
 
   - id: C14
@@ -169,8 +182,9 @@ claims:
       type: lean4
       declaration: "Ival.mul_contains, Ival.sq_contains, q4_exact_gap, q4_gt_of_bounds, q4_trace_endpoints_gap"
       role: main
-      result: pass@2026-10-17
+      result: pass@2026-10-18
       statement_check: "approved@2026-10-17 by 作者复核"
       artifact: results/q9_arb_trace.json
+      run: python src/replay_claims.py --claim C14
       notes: "回答外审 Q4。trace 与复核器：src/q9_arb_trace.py -> results/q9_arb_trace.json + results/q9_arb_trace_check.json（all_ok=true, 8/8）；每步把端点向外舍入到 10⁻⁶⁴ 并标注 rounding.lo='down'/hi='up'；独立路径断言 reg_lo ≤ exact_lo ≤ exact_hi ≤ reg_hi 与 gap>0；另用 Arb(128 bit) 参考区间核对 trace 区间**包含**它。Lean 侧：Ival.mul_contains/Ival.sq_contains 属 [propext, Quot.sound] 组，只用 core 的 Int.mul_le_mul；q4_exact_gap 与 q4_trace_endpoints_gap 由 decide 判定，**不依赖任何公理**（前者比 trace 更强：认证精确有理数本身已隔开，无需舍入；后者直接对 trace JSON 登记的 10⁻⁶⁴ 网格整数端点下结论）。诚实边界：除法步在 trace 中为'精确有理端点相除'，Lean 内核未把该步公理化；Arb 依赖图未导出"
 
